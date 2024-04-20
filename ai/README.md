@@ -27,9 +27,9 @@ Ensure you've got downloaded a dataset and set valid path in .env file.
 Then run:    
 **Linux**  
 ```bash
-python3 train.py
+python3 src/train.py
 ```
 **Windows**  
 ```bash
-py train.py
+py src/train.py
 ```
