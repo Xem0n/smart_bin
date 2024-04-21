@@ -22,29 +22,27 @@ parser.add_argument(
     required=True,
     choices=['metal', 'paper', 'plastic'],
 )
+parser.add_argument(
+    '-p',
+    '--path',
+    help='Path to the image to test. If not provided, a random image will be selected from the dataset.',
+)
 
 args = parser.parse_args()
 
-model = keras.models.load_model(os.getenv('MODEL_PATH'))
-probability_model = keras.Sequential([
-    model,
-    keras.layers.Softmax()
-])
-
-img_width = 512
-img_height = 384
+img_width = int(os.getenv('IMAGE_WIDTH'))
+img_height = int(os.getenv('IMAGE_HEIGHT'))
 class_names = ['metal', 'paper', 'plastic']
 
-dataset_path = os.getenv('DATASET_PATH')
-sdir = f'{dataset_path}/{args.type}/'
-flist = os.listdir(sdir)
-test_img = random.choice(flist)
-test_img = os.path.join(sdir, test_img)
+def get_image_path():
+    if args.path:
+        return args.path
 
-img = image.load_img(test_img, target_size=(img_height, img_width))
-img = image.img_to_array(img, dtype=np.uint8)
+    dataset_path = os.getenv('DATASET_PATH')
+    sdir = f'{dataset_path}/{args.type}/'
+    flist = os.listdir(sdir)
 
-predictions_single = probability_model.predict(np.expand_dims(img, 0))
+    return os.path.join(sdir, random.choice(flist))
 
 def plot_value_array(i, predictions_array):
     plt.grid(False)
@@ -53,14 +51,28 @@ def plot_value_array(i, predictions_array):
     thisplot = plt.bar(range(3), predictions_array, color="#777777")
     plt.ylim([0, 1])
 
-fig = plt.figure()
+def show_prediction(predictions, img):
+    fig = plt.figure()
 
-fig.add_subplot(121)
-plt.axis('off')
-plt.imshow(img, cmap=plt.cm.binary)
+    fig.add_subplot(121)
+    plt.axis('off')
+    plt.imshow(img, cmap=plt.cm.binary)
 
-fig.add_subplot(122)
-plot_value_array(1, predictions_single[0])
-_ = plt.xticks(range(3), class_names, rotation=45)
+    fig.add_subplot(122)
+    plot_value_array(1, predictions[0])
+    _ = plt.xticks(range(3), class_names, rotation=45)
 
-plt.show()
+    plt.show()
+
+model = keras.models.load_model(os.getenv('MODEL_PATH'))
+probability_model = keras.Sequential([
+    model,
+    keras.layers.Softmax()
+])
+
+img_path = get_image_path()
+img = image.load_img(img_path, target_size=(img_height, img_width))
+img = image.img_to_array(img, dtype=np.uint8)
+
+predictions_single = probability_model.predict(np.expand_dims(img, 0))
+show_prediction(predictions_single, img)
