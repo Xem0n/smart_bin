@@ -1,3 +1,4 @@
+import os
 import tensorflow as tf
 import keras
 from keras import layers
@@ -5,10 +6,11 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-batch_size = os.getenv('BATCH_SIZE')
-img_width = os.getenv('IMAGE_WIDTH')
-img_height = os.getenv('IMAGE_HEIGHT')
+batch_size = int(os.getenv('BATCH_SIZE'))
+img_width = int(os.getenv('IMAGE_WIDTH'))
+img_height = int(os.getenv('IMAGE_HEIGHT'))
 dataset_path = os.getenv('DATASET_PATH')
+dataset_path = f'./{dataset_path}/'
 
 train_ds = keras.utils.image_dataset_from_directory(
     dataset_path,
