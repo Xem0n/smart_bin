@@ -45,7 +45,11 @@ model = keras.Sequential([
     keras.layers.Conv2D(32, 3, activation='relu'),
     keras.layers.MaxPooling2D(),
     keras.layers.Flatten(),
+    keras.layers.Dense(256, activation='relu'),
     keras.layers.Dense(128, activation='relu'),
+    keras.layers.Dense(64, activation='relu'),
+    keras.layers.Dense(32, activation='relu'),
+    keras.layers.Dense(16, activation='relu'),
     keras.layers.Dense(num_classes),
 ])
 
