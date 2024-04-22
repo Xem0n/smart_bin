@@ -17,9 +17,7 @@ parser = argparse.ArgumentParser(
 parser.add_argument(
     '-t',
     '--type',
-    default='metal',
-    help='Type of garbage to test.',
-    required=True,
+    help='Type of garbage to test. Used when no path is provided.',
     choices=['metal', 'paper', 'plastic'],
 )
 parser.add_argument(
@@ -27,16 +25,31 @@ parser.add_argument(
     '--path',
     help='Path to the image to test. If not provided, a random image will be selected from the dataset.',
 )
+parser.add_argument(
+    '-m',
+    '--model',
+    help='Path to the model. If not provided, a model provided in the environment variable MODEL_PATH will be used.',
+)
+parser.add_argument(
+    '-c',
+    '--color-mode',
+    help='Color mode. If not provided, the value in the environment variable COLOR_MODE will be used',
+    choices=['rgb', 'grayscale'],
+)
 
 args = parser.parse_args()
 
 img_width = int(os.getenv('IMAGE_WIDTH'))
 img_height = int(os.getenv('IMAGE_HEIGHT'))
+color_mode = args.color_mode or os.getenv('COLOR_MODE')
 class_names = ['metal', 'paper', 'plastic']
 
 def get_image_path():
     if args.path:
         return args.path
+
+    if not args.type:
+        raise ValueError('Type must be provided when no path is provided.')
 
     dataset_path = os.getenv('DATASET_PATH')
     sdir = f'{dataset_path}/{args.type}/'
@@ -64,15 +77,21 @@ def show_prediction(predictions, img):
 
     plt.show()
 
-model = keras.models.load_model(os.getenv('MODEL_PATH'))
+model_path = args.model or os.getenv('MODEL_PATH')
+model = keras.models.load_model(model_path)
 probability_model = keras.Sequential([
     model,
     keras.layers.Softmax()
 ])
 
 img_path = get_image_path()
-img = image.load_img(img_path, target_size=(img_height, img_width))
+original_img = image.load_img(img_path, target_size=(img_height, img_width))
+img = original_img
+
+if color_mode == 'grayscale':
+    img = original_img.convert('L')
+
 img = image.img_to_array(img, dtype=np.uint8)
 
 predictions_single = probability_model.predict(np.expand_dims(img, 0))
-show_prediction(predictions_single, img)
+show_prediction(predictions_single, original_img)
