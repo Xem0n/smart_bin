@@ -9,6 +9,7 @@ load_dotenv()
 batch_size = int(os.getenv('BATCH_SIZE'))
 img_width = int(os.getenv('IMAGE_WIDTH'))
 img_height = int(os.getenv('IMAGE_HEIGHT'))
+color_mode = os.getenv('COLOR_MODE')
 dataset_path = os.getenv('DATASET_PATH')
 dataset_path = f'./{dataset_path}/'
 
@@ -19,6 +20,7 @@ train_ds = keras.utils.image_dataset_from_directory(
     seed=123,
     image_size=(img_height, img_width),
     batch_size=batch_size,
+    color_mode=color_mode,
 )
 val_ds = keras.utils.image_dataset_from_directory(
     dataset_path,
@@ -27,13 +29,14 @@ val_ds = keras.utils.image_dataset_from_directory(
     seed=123,
     image_size=(img_height, img_width),
     batch_size=batch_size,
+    color_mode=color_mode,
 )
 
 class_names = train_ds.class_names
 num_classes = len(class_names)
 
 model = keras.Sequential([
-    keras.Input(shape=(img_height, img_width, 3)),
+    keras.Input(shape=(img_height, img_width, 3 if color_mode == 'rgb' else 1)),
     keras.layers.Rescaling(1./255),
     keras.layers.Conv2D(32, 3, activation='relu'),
     keras.layers.MaxPooling2D(),
