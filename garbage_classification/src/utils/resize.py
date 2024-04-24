@@ -15,14 +15,38 @@ def resize_directory(source_directory, target_directory):
     for file in files:
         with Image.open(path.join(source_directory, file)) as img:
             img = resize(img)
-            img = remove_alpha(img)
             img.save(path.join(target_directory, file))
 
 def resize(img):
-    return img.resize(
+    if args.mode == 'fill':
+        return resize_and_fill(img)
+    elif args.mode == 'scale':
+        return resize_and_scale(img)
+
+def resize_and_fill(img, fill_color=(255, 255, 255)):
+    if img.width > DEST_IMG_WIDTH or img.height > DEST_IMG_HEIGHT:
+        min_dimension = min(DEST_IMG_WIDTH, DEST_IMG_HEIGHT)
+        img.thumbnail((min_dimension, min_dimension), Image.LANCZOS)
+
+    resized_image = Image.new('RGB', (DEST_IMG_WIDTH, DEST_IMG_HEIGHT), fill_color)
+    resized_image.paste(
+        img,
+        (
+            (DEST_IMG_WIDTH - img.width) // 2,
+            (DEST_IMG_HEIGHT - img.height) // 2
+        )
+    )
+
+    return resized_image
+
+def resize_and_scale(img):
+    img = img.resize(
         (DEST_IMG_WIDTH, DEST_IMG_HEIGHT),
         resample=Image.Resampling.LANCZOS,
     )
+    img = remove_alpha(img)
+
+    return img
 
 def remove_alpha(img):
     return img.convert('RGB')
@@ -43,6 +67,13 @@ def main():
         '--target',
         help='Where to save the resized images.',
         required=True,
+    )
+    parser.add_argument(
+        '-m',
+        '--mode',
+        help='Resize technique.',
+        default='fill',
+        choices=['fill', 'scale'],
     )
 
     args = parser.parse_args()
