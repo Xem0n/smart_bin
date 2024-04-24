@@ -15,10 +15,17 @@ def resize_directory(source_directory, target_directory):
     for file in files:
         with Image.open(path.join(source_directory, file)) as img:
             img = resize(img)
+            img = remove_alpha(img)
             img.save(path.join(target_directory, file))
 
 def resize(img):
-    return img
+    return img.resize(
+        (DEST_IMG_WIDTH, DEST_IMG_HEIGHT),
+        resample=Image.Resampling.LANCZOS,
+    )
+
+def remove_alpha(img):
+    return img.convert('RGB')
 
 def main():
     parser = argparse.ArgumentParser(
