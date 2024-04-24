@@ -2,6 +2,7 @@ import os
 import tensorflow as tf
 import keras
 import argparse
+from os import path
 from keras import layers
 from dotenv import load_dotenv
 
@@ -63,6 +64,13 @@ def train_model(model, train_ds, val_ds, epochs):
         epochs=epochs,
     )
 
+def save_logs(model, logs_path, model_name, val_ds):
+    logs_path = os.path.join(logs_path, model_name + '.log')
+    _, acc = model.evaluate(val_ds, verbose=2)
+
+    with open(logs_path, 'w') as f:
+        f.write('accuracy: {:5.2f}%'.format(acc * 100))
+
 def main():
     parser = argparse.ArgumentParser(
         prog='Train Model',
@@ -79,6 +87,12 @@ def main():
         '--model',
         help='Path to save the model. Otherwise, use the MODEL_PATH environment variable.',
         default=os.getenv('MODEL_PATH'),
+    )
+    parser.add_argument(
+        '-l',
+        '--logs',
+        help='Path to logs. Otherwise, use the LOGS_PATH environment variable.',
+        default=os.getenv('LOGS_PATH'),
     )
     parser.add_argument(
         '-e',
@@ -106,8 +120,9 @@ def main():
     num_classes = len(class_names)
 
     model = init_model(img_width, img_height, color_mode, num_classes)
-    train_model(model, train_ds, val_ds, args.epochs)
+    train_model(model, train_ds, val_ds, int(args.epochs))
     model.save(args.model)
+    save_logs(model, args.logs, path.basename(args.model), val_ds)
 
 if __name__ == '__main__':
     main()
