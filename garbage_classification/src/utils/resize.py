@@ -24,9 +24,12 @@ def resize(img, mode):
         return resize_and_scale(img)
 
 def resize_and_fill(img, fill_color=(255, 255, 255)):
-    if img.width > DEST_IMG_WIDTH or img.height > DEST_IMG_HEIGHT:
-        min_dimension = min(DEST_IMG_WIDTH, DEST_IMG_HEIGHT)
-        img.thumbnail((min_dimension, min_dimension), Image.LANCZOS)
+    width, height = get_scaled_size(img)
+
+    img = img.resize(
+        (width, height),
+        resample=Image.Resampling.LANCZOS,
+    )
 
     resized_image = Image.new('RGB', (DEST_IMG_WIDTH, DEST_IMG_HEIGHT), fill_color)
     resized_image.paste(
@@ -38,6 +41,23 @@ def resize_and_fill(img, fill_color=(255, 255, 255)):
     )
 
     return resized_image
+
+def get_scaled_size(img):
+    width, height = img.width, img.height
+    aspect_ratio = height / width
+
+    # im sure theres better way xd
+    if aspect_ratio > 1:
+        width = DEST_IMG_HEIGHT / aspect_ratio
+        height = DEST_IMG_HEIGHT
+    elif aspect_ratio < 1:
+        width = DEST_IMG_WIDTH
+        height = DEST_IMG_WIDTH * aspect_ratio
+    else:
+        width = min(DEST_IMG_WIDTH, DEST_IMG_HEIGHT)
+        height = width
+
+    return (int(width), int(height))
 
 def resize_and_scale(img):
     img = img.resize(
