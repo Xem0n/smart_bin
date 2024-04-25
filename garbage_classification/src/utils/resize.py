@@ -9,7 +9,7 @@ load_dotenv()
 DEST_IMG_WIDTH = int(os.getenv('IMAGE_WIDTH'))
 DEST_IMG_HEIGHT = int(os.getenv('IMAGE_HEIGHT'))
 
-def resize_directory(source_directory, target_directory, mod3):
+def resize_directory(source_directory, target_directory, mode):
     files = [f for f in os.listdir(source_directory) if path.isfile(path.join(source_directory, f))]
 
     for file in files:
