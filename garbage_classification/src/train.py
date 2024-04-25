@@ -69,6 +69,7 @@ def save_logs(model, logs_path, model_name, val_ds):
     _, acc = model.evaluate(val_ds, verbose=2)
 
     with open(logs_path, 'w') as f:
+        model.summary(print_fn=lambda x: f.write(x + '\n'))
         f.write('accuracy: {:5.2f}%'.format(acc * 100))
 
 def main():
