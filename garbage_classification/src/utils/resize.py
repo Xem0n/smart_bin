@@ -9,18 +9,18 @@ load_dotenv()
 DEST_IMG_WIDTH = int(os.getenv('IMAGE_WIDTH'))
 DEST_IMG_HEIGHT = int(os.getenv('IMAGE_HEIGHT'))
 
-def resize_directory(source_directory, target_directory):
+def resize_directory(source_directory, target_directory, mod3):
     files = [f for f in os.listdir(source_directory) if path.isfile(path.join(source_directory, f))]
 
     for file in files:
         with Image.open(path.join(source_directory, file)) as img:
-            img = resize(img)
+            img = resize(img, mode)
             img.save(path.join(target_directory, file))
 
-def resize(img):
-    if args.mode == 'fill':
+def resize(img, mode):
+    if mode == 'fill':
         return resize_and_fill(img)
-    elif args.mode == 'scale':
+    elif mode == 'scale':
         return resize_and_scale(img)
 
 def resize_and_fill(img, fill_color=(255, 255, 255)):
@@ -78,7 +78,7 @@ def main():
 
     args = parser.parse_args()
 
-    resize_directory(args.source, args.target)
+    resize_directory(args.source, args.target, args.mode)
 
 if __name__ == '__main__':
     main()
