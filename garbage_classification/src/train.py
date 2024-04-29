@@ -31,8 +31,15 @@ def get_dataset(dataset_path, img_width, img_height, batch_size, color_mode):
     return (train_ds, val_ds)
 
 def init_model(img_width, img_height, color_mode, num_classes):
+    data_augmentation = keras.Sequential([
+        layers.RandomFlip('horizontal_and_vertical'),
+        layers.RandomRotation(0.1),
+        layers.RandomZoom(0.1),
+    ])
+
     model = keras.Sequential([
         keras.Input(shape=(img_height, img_width, 3 if color_mode == 'rgb' else 1)),
+        data_augmentation,
         layers.Rescaling(1./255),
         layers.Conv2D(32, 3, activation='relu'),
         layers.MaxPooling2D(),
