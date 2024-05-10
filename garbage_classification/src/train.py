@@ -1,10 +1,11 @@
 import os
 import tensorflow as tf
-import keras
+from tensorflow import keras
 import argparse
 from os import path
-from keras import layers
 from dotenv import load_dotenv
+
+layers = keras.layers
 
 load_dotenv()
 
