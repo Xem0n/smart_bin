@@ -12,6 +12,7 @@ def get_model(model_path):
 def convert_keras_to_lite(keras_path, lite_path):
     model = get_model(keras_path)
     converter = tf.lite.TFLiteConverter.from_keras_model(model)
+    converter.optimizations = [tf.lite.Optimize.DEFAULT]
     tflite_model = converter.convert()
 
     with open(lite_path, 'wb') as file:
