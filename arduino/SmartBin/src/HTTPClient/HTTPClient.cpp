@@ -2,8 +2,12 @@
 #include <SPI.h>
 #include <WiFiNINA.h>
 #include <SD.h>
+#include <ArduCAM.h>
+#include "../ArduCAMWrapper/ArduCAMWrapper.h"
 
 #include "HTTPClient.h"
+
+#define BUFFER_SIZE 256
 
 namespace SmartBin {
   HTTPClient::HTTPClient(const char* host, int port) {
@@ -15,13 +19,13 @@ namespace SmartBin {
     // Destructor
   }
 
-  void HTTPClient::sendRequest(File image) {
+  void HTTPClient::sendRequest(ArduCAMWrapper::Image image) {
     if (client.connect(host, port)) {
       client.println("POST / HTTP/1.1");
       client.print("Host: ");
       client.println(host);
       client.println("Content-Type: image/jpeg");
-      client.println("Content-Length: " + String(image.size()));
+      client.println("Content-Length: " + String(image.length));
       client.println();
       writeImage(image);
 
@@ -29,17 +33,16 @@ namespace SmartBin {
     }
   }
 
-  void HTTPClient::writeImage(File image) {
-    while (true) {
-      size_t size = image.available();
+  void HTTPClient::writeImage(ArduCAMWrapper::Image image) {
+    size_t length = image.length;
 
-      if (size <= 0) {
-        break;
-      }
+    while (length > 0) {
+      size_t size = min(BUFFER_SIZE, length);
 
-      size = size > sizeof(buffer) ? sizeof(buffer) : size;
-      image.read(buffer, size);
+      memcpy(buffer, image.data + image.length - length, size);
       client.write(buffer, size);
+
+      length -= size;
     }
   }
 
