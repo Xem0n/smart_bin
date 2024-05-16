@@ -1,5 +1,5 @@
 import React from "react";
-import { GarbageCategory } from "../api/resources";
+import { BinData, GarbageCategory } from "../api/resources";
 
 export interface DatePickerProps {
   date: Date;
@@ -22,4 +22,8 @@ export interface DayProps {
 export interface CategoryDisplayProps {
   category: GarbageCategory;
   date: Date;
+}
+
+export interface BinInfoProps {
+  data: BinData;
 }
