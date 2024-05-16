@@ -1,0 +1,106 @@
+{
+  bins: [
+    {
+      id: "82756e76-f586-4cfb-bd56-196c0c45a466",
+      name: "Hasiok1",
+      color: "#af3edf",
+      categories: [
+        {
+          id: "a60780f1-0890-4b6c-a156-a4dcef9179ef",
+          name: "Plastik",
+          color: "#E5B514",
+          garbages: [
+            {
+              id: "d4cb7464-c91b-4780-bc75-6e0fef4e2c08",
+              created_at: 1715854222
+            },
+            {
+              id: "f60baef2-ddc7-4fc3-9c62-71febf91ff7a",
+              created_at: 1715854391
+            },
+            {
+              id: "c38a8085-258c-4f7b-9cd1-433b58b829b2",
+              created_at: 1715767998
+            },
+            {
+              id: "3556165f-e967-462b-b094-fa9be5f91a2b",
+              created_at: 1715768009
+            }
+          ]
+        },
+        {
+          id: "3627a6fd-cbfd-4314-889e-763e6156511f",
+          name: "Papier",
+          color: "#5AA9E7",
+          garbages: [
+            {
+              id: "2f204d6b-a04c-4e4a-bde7-669ac88a82a3",
+              created_at: 1715854480
+            },
+            {
+              id: "83b00e0a-4d55-4eb5-98b8-7452cd076ad2",
+              created_at: 1715854487
+            },
+            {
+              id: "b50f98f5-9a03-41b1-a8af-3f1e57ce5b59",
+              created_at: 1715854487
+            },
+            {
+              id: "b027fda6-3fdb-44c1-ada9-e705d4cdc026",
+              created_at: 1715854495
+            }
+          ]
+        },
+        {
+          id: "c5f4a2d1-54a8-41fc-b885-469d6b3bd446",
+          name: "Metal",
+          color: "#F94144",
+          garbages: [
+            {
+              id: "b37c0e45-5302-41aa-aaa4-2ba5b11ee635",
+              created_at: 1715768183
+            },
+            {
+              id: "ce1e7524-a152-463a-9709-7741a5088d65",
+              created_at: 1715681793
+            },
+            {
+              id: "48e2c357-9782-4263-86a5-42a941bef173",
+              created_at: 1715681798
+            },
+            {
+              id: "29c190eb-fc72-47c1-be12-4a6c27a103d2",
+              created_at: 1715681803
+            }
+          ]
+        }
+      ]
+    },
+    {
+      id: "5c355fc4-d706-432e-a3a8-0a4c69f1669c",
+      name: "Recyglus",
+      color: "#f3a4ed",
+      categories: [
+        {
+          id: "23d9ea68-704d-49d6-aa1c-7532c2fa23a6",
+          name: "Plastik",
+          color: "##E5B514",
+
+          garbages: []
+        },
+        {
+          id: "062da5a6-7585-4af9-896d-461d8d38f65b",
+          name: "Papier",
+          color: "#5AA9E7",
+          garbages: []
+        },
+        {
+          id: "15be52ac-614d-464b-bebb-b30c8f645e86",
+          name: "Metal",
+          color: "#F94144",
+          garbages: []
+        }
+      ]
+    }
+  ]
+}

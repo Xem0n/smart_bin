@@ -6,7 +6,7 @@ import { StyleSheet } from "react-native";
 import HeaderLogo from "./HeaderLogo";
 import ManagePage from "../../pages/ManagePage";
 import HomePage from "../../pages/HomePage";
-import DataPage from "../../pages/ManagePage";
+import DataPage from "../../pages/DataPage";
 
 const Navigation = createDrawerNavigator();
 
