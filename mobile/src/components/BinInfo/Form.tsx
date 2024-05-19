@@ -6,6 +6,8 @@ import ColorPicker from "./ColorPicker";
 import { BinData } from "../../api/resources";
 import { ActiveBinContext } from "../../contexts";
 
+// todo: fix selecting xd
+
 export default function Form(props: FormProps) {
   const activeBin = useContext(ActiveBinContext);
   const updatedData = useRef<BinData>({ ...props.data });
