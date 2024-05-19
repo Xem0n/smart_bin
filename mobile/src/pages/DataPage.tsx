@@ -8,7 +8,7 @@ export default function DataPage() {
   const [date, setDate] = useState(new Date());
   const resources = useContext(ResourcesContext);
 
-  const categories = resources?.bins[0].categories.map((category) => (
+  const categories = resources?.data?.bins[0].categories.map((category) => (
     <CategoryDisplay key={category.id} category={category} date={date} />
   ));
 
