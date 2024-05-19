@@ -1,15 +1,17 @@
-import { useRef, useState } from "react";
+import { useContext, useRef, useState } from "react";
 import { Platform, StyleSheet, Text, TextInput, View } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { FormProps } from "../../types/props";
 import ColorPicker from "./ColorPicker";
 import { BinData } from "../../api/resources";
+import { ActiveBinContext } from "../../contexts";
 
 export default function Form(props: FormProps) {
+  const activeBin = useContext(ActiveBinContext);
   const updatedData = useRef<BinData>({ ...props.data });
   const [name, setName] = useState<string>(props.data.name);
 
-  // todo: add select button
+  const isSelected = props.data.id === activeBin?.data;
 
   const updateName = (name: string) => {
     updatedData.current.name = name;
@@ -31,12 +33,24 @@ export default function Form(props: FormProps) {
 
       <ColorPicker current={props.data.color} update={updateColor} />
 
-      <TouchableOpacity
-        style={styles.button}
-        onPress={() => props.update(updatedData.current)}
-      >
-        <Text>Zapisz</Text>
-      </TouchableOpacity>
+      <View style={styles.buttonRow}>
+        <TouchableOpacity
+          style={styles.button}
+          onPress={() => props.update(updatedData.current)}
+        >
+          <Text>Zapisz</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={styles.button}
+          onPress={() => activeBin?.update(props.data.id)}
+          disabled={isSelected}
+        >
+          <Text style={{ color: isSelected ? "#838383" : "#000" }}>
+            {isSelected ? "Wybrany" : "Wybierz"}
+          </Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 }
@@ -79,10 +93,17 @@ const styles = StyleSheet.create({
 
     textAlign: "center",
   },
+  buttonRow: {
+    width: "62%",
+
+    flexDirection: "row",
+    justifyContent: "space-between",
+  },
   button: {
     backgroundColor: "#83838355",
 
     marginTop: 20,
+
     paddingHorizontal: 25,
     paddingVertical: 5,
 
