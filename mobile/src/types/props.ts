@@ -26,4 +26,15 @@ export interface CategoryDisplayProps {
 
 export interface BinInfoProps {
   data: BinData;
+  update: () => void;
+}
+
+export interface FormProps {
+  data: BinData;
+  update: (data: BinData) => void;
+}
+
+export interface ColorPickerProps {
+  current: string;
+  update: (color: string) => void;
 }

@@ -7,14 +7,21 @@ import Drawer from "./src/navigation/drawer/Drawer";
 export default function App() {
   const [resources, setResources] = useState<Resources>();
 
+  const fetch = async () => {
+    try {
+      const data = await fetchResources();
+      setResources(data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   useEffect(() => {
-    fetchResources()
-      .then((data) => setResources(data))
-      .catch(() => {});
+    fetch();
   });
 
   return (
-    <ResourcesContext.Provider value={resources}>
+    <ResourcesContext.Provider value={{ data: resources, update: fetch }}>
       <Drawer />
     </ResourcesContext.Provider>
   );

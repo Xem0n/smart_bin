@@ -4,23 +4,34 @@ import Form from "./Form";
 import { useState } from "react";
 import { TouchableWithoutFeedback } from "react-native-gesture-handler";
 import { Feather } from "@expo/vector-icons";
+import { BinData } from "../../api/resources";
 
 export default function BinInfo(props: BinInfoProps) {
+  const [data, setData] = useState<BinData>(props.data);
   const [expanded, setExpanded] = useState<boolean>(false);
 
   // todo: add animation for expanding
 
+  const update = (newData: BinData) => {
+    setData(newData);
+    setExpanded(false);
+
+    // todo: send update request
+
+    props.update();
+  };
+
   return (
     <View style={styles.container}>
       <TouchableWithoutFeedback
-        style={styles.header}
+        style={{ ...styles.header, backgroundColor: data.color }}
         onPress={() => setExpanded(!expanded)}
       >
-        <Text style={styles.name}>{props.data.name}</Text>
+        <Text style={styles.name}>{data.name}</Text>
         <Feather name="chevron-down" size={32} />
       </TouchableWithoutFeedback>
 
-      {expanded && <Form data={props.data} />}
+      {expanded && <Form data={data} update={update} />}
     </View>
   );
 }
@@ -32,7 +43,6 @@ const styles = StyleSheet.create({
     marginTop: 30,
   },
   header: {
-    backgroundColor: "#F3F3F3",
     zIndex: 99,
     elevation: Platform.OS === "android" ? 99 : 0,
 

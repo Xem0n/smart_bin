@@ -1,22 +1,40 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Platform, StyleSheet, Text, TextInput, View } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
-import { BinInfoProps } from "../../types/props";
+import { FormProps } from "../../types/props";
+import ColorPicker from "./ColorPicker";
+import { BinData } from "../../api/resources";
 
-export default function Form(props: BinInfoProps) {
+export default function Form(props: FormProps) {
+  const updatedData = useRef<BinData>({ ...props.data });
   const [name, setName] = useState<string>(props.data.name);
 
-  // todo: add color picker
   // todo: add select button
+
+  const updateName = (name: string) => {
+    updatedData.current.name = name;
+    setName(name);
+  };
+
+  const updateColor = (color: string) => (updatedData.current.color = color);
 
   return (
     <View style={styles.container}>
       <Text style={styles.label}>Zmień nazwę</Text>
-      <TextInput style={styles.nameInput} value={name} onChangeText={setName} />
+      <TextInput
+        style={styles.nameInput}
+        value={name}
+        onChangeText={updateName}
+      />
 
       <Text style={styles.label}>Zmień kolor</Text>
 
-      <TouchableOpacity style={styles.button}>
+      <ColorPicker current={props.data.color} update={updateColor} />
+
+      <TouchableOpacity
+        style={styles.button}
+        onPress={() => props.update(updatedData.current)}
+      >
         <Text>Zapisz</Text>
       </TouchableOpacity>
     </View>

@@ -6,15 +6,11 @@ import { BinInfo } from "../components/BinInfo";
 export default function ManagePage() {
   const resources = useContext(ResourcesContext);
 
-  const bins = resources?.bins.map((bin) => (
-    <BinInfo key={bin.id} data={bin} />
+  const bins = resources?.data?.bins.map((bin) => (
+    <BinInfo key={bin.id} data={bin} update={resources.update} />
   ));
 
-  return (
-    <View style={styles.container}>
-      {bins}
-    </View>
-  );
+  return <View style={styles.container}>{bins}</View>;
 }
 
 const styles = StyleSheet.create({
