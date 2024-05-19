@@ -1,8 +1,16 @@
+import uuid
 import numpy as np
 from flask import Flask, request
 from predictor import predict, convert_bytes_to_image_batch
+from resizer import resize
+from db.database import init_db, db_session
 
 app = Flask(__name__)
+init_db()
+
+@app.teardown_appcontext
+def shutdown_session(exception=None):
+    db_session.remove()
 
 @app.post('/')
 def predict_image():
