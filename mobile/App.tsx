@@ -1,11 +1,12 @@
 import "react-native-gesture-handler";
 import { useEffect, useState } from "react";
 import { Resources, fetchResources } from "./src/api/resources";
-import { ResourcesContext } from "./src/contexts";
+import { ActiveBinContext, ResourcesContext } from "./src/contexts";
 import Drawer from "./src/navigation/drawer/Drawer";
 
 export default function App() {
   const [resources, setResources] = useState<Resources>();
+  const [activeBin, setActiveBin] = useState<string | undefined>();
 
   const fetch = async () => {
     try {
@@ -17,12 +18,18 @@ export default function App() {
   };
 
   useEffect(() => {
-    fetch();
+    fetch()
+      .then(() => setActiveBin(resources?.bins[0].id))
+      .catch(console.error);
   });
 
   return (
     <ResourcesContext.Provider value={{ data: resources, update: fetch }}>
-      <Drawer />
+      <ActiveBinContext.Provider
+        value={{ data: activeBin, update: setActiveBin }}
+      >
+        <Drawer />
+      </ActiveBinContext.Provider>
     </ResourcesContext.Provider>
   );
 }

@@ -1,14 +1,16 @@
 import { StyleSheet, View } from "react-native";
 import CategoryDisplay from "../components/CategoryDisplay";
 import { useContext, useState } from "react";
-import { ResourcesContext } from "../contexts";
+import { ActiveBinContext, ResourcesContext } from "../contexts";
 import { DatePicker } from "../components/DatePicker";
 
 export default function DataPage() {
   const [date, setDate] = useState(new Date());
   const resources = useContext(ResourcesContext);
+  const activeBin = useContext(ActiveBinContext);
 
-  const categories = resources?.data?.bins[0].categories.map((category) => (
+  const bin = resources?.data?.bins.find((bin) => bin.id === (activeBin?.data ?? ""));
+  const categories = bin?.categories.map((category) => (
     <CategoryDisplay key={category.id} category={category} date={date} />
   ));
 
