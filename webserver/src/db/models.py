@@ -16,6 +16,7 @@ class Category(Base):
     __tablename__ = 'category'
 
     id: Mapped[str] = mapped_column(String(36), primary_key=True)
+    type_id: Mapped[int] = mapped_column()
     name: Mapped[str] = mapped_column(String(64))
     color: Mapped[str] = mapped_column(String(9))
     bin_id: Mapped[str] = mapped_column(String(12), ForeignKey('bin.id'))
@@ -27,7 +28,7 @@ class Garbage(Base):
     __tablename__ = 'garbage'
 
     id: Mapped[str] = mapped_column(String(36), primary_key=True)
-    created_at: Mapped[int] = mapped_column(String(36))
+    created_at: Mapped[int] = mapped_column()
     category_id: Mapped[str] = mapped_column(String(36), ForeignKey('category.id'))
 
     category: Mapped['Category'] = relationship(back_populates='garbages')
