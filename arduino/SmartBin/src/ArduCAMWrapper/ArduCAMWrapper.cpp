@@ -113,7 +113,5 @@ SmartBin::ArduCAMWrapper::Image SmartBin::ArduCAMWrapper::captureImage(ArduCAM* 
     }
   }
 
-  // delete[] buffer;
-
   return image;
 }
