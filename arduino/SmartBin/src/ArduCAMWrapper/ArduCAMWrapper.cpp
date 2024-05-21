@@ -41,6 +41,11 @@ ArduCAM SmartBin::ArduCAMWrapper::init(int chipSelectPin) {
   myCAM.set_format(JPEG);
   myCAM.InitCAM();
   myCAM.OV2640_set_JPEG_size(OV2640_640x480);
+  // myCAM.OV2640_set_Light_Mode(Auto);
+  myCAM.OV2640_set_Color_Saturation(Saturation2);
+  myCAM.OV2640_set_Brightness(Brightness_2);
+  myCAM.OV2640_set_Contrast(Contrast4);
+  // myCAM.OV2640_set_Special_effects();
   delay(1000);
   myCAM.clear_fifo_flag();
 
@@ -104,7 +109,7 @@ SmartBin::ArduCAMWrapper::Image SmartBin::ArduCAMWrapper::captureImage(ArduCAM* 
     }
   }
 
-  delete[] buffer;
+  // delete[] buffer;
 
   return image;
 }
