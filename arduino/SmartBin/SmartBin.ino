@@ -23,6 +23,7 @@ ArduCAM myCam;
 StepperController stepperController;
 
 size_t lastSendTime = millis();
+String lastImagePath = "";
 
 const char *garbageTypeMapping[] = {
   "metal",
@@ -71,6 +72,20 @@ void sendImage() {
   delete[] image.data;
 }
 
+void sendImageFromSD() {
+  Serial.println("Sending image from SD...");
+
+  String path = ArduCAMWrapper::saveImage(&myCam);
+
+  if (path == "") {
+    return;
+  }
+
+  lastImagePath = path;
+
+  httpClient.sendRequest(path);
+}
+
 bool isGarbageType(HTTPResponse response) {
   return response >= 1 && response <= 3;
 }
@@ -78,23 +93,30 @@ bool isGarbageType(HTTPResponse response) {
 void loop() {
   HTTPResponse response = httpClient.handleResponse();
 
-  if (response == DISCONNECTED) {
-    Serial.println("Try once more...");
-    sendImage();
-
-    lastSendTime = millis();
-  } else if (isGarbageType(response)) {
+  if (isGarbageType(response)) {
     Serial.print("Response: ");
     Serial.println(garbageTypeMapping[response - 1]);
 
     // stepperController.drop((int)response - 1);
+
+    lastImagePath = "";
+    lastSendTime = millis();
+  } else if (response == DISCONNECTED) {
+    Serial.println("Try once more...");
+
+    if (lastImagePath != "") {
+      httpClient.sendRequest(lastImagePath);
+    } else {
+      sendImage();
+    }
+
     lastSendTime = millis();
   } else if (response == NO_REQUEST) {
     size_t timestamp = millis();
 
     if ((timestamp - lastSendTime) > SEND_INTERVAL) {
       Serial.println("10s idle, sending image");
-      sendImage();
+      sendImageFromSD();
       lastSendTime = timestamp;
     }
   } else if (response == UNKNOWN_TYPE) {
