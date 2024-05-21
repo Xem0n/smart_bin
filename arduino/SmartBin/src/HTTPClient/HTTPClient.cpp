@@ -102,17 +102,30 @@ namespace SmartBin {
       return DISCONNECTED;
     }
 
-    char* body = parseResponse();
+    if (client.available()) {
+      char* body = parseResponse();
 
-    if (body != nullptr) {
-      int type = strtol(body, nullptr, 10);
+      client.stop();
+      waitingForResponse = false;
+
+      if (body != nullptr) {
+        int type = strtol(body, nullptr, 10);
+
+        delete[] body;
+
+        return HTTPResponse(type);
+      }
 
       delete[] body;
 
-      return HTTPResponse(type);
+      return NO_BODY;
+    } else if ((millis() - sentTimestamp) > TIMEOUT_LIMIT) {
+      client.stop();
+      waitingForResponse = false;
+
+      return TIMEOUT;
     }
 
-    delete[] body;
     return WAITING;
   }
 
@@ -132,8 +145,6 @@ namespace SmartBin {
       }
 
       delete[] line;
-
-      waitingForResponse = false;
     }
 
     return nullptr;
