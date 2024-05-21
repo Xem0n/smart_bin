@@ -1,8 +1,6 @@
 #include <Wire.h>
 #include <SPI.h>
 #include <ArduCAM.h>
-#include <WiFiNINA.h>
-#include <SD.h>
 
 #include "src/WiFiWrapper/WiFiWrapper.h"
 #include "src/SDWrapper/SDWrapper.h"
