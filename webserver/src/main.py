@@ -33,7 +33,7 @@ def predict_image():
         f.write(data)
 
     print('transform')
-    image = transform_image(id)
+    image = transform_image(id, data)
 
     print('predict')
     prediction = predict(image)
