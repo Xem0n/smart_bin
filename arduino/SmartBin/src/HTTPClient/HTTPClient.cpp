@@ -8,6 +8,7 @@
 #include "HTTPClient.h"
 
 #define BUFFER_SIZE 64
+#define TIMEOUT_LIMIT 5000
 
 namespace SmartBin {
   HTTPClient::HTTPClient(const char* host, int port) {
@@ -120,6 +121,7 @@ namespace SmartBin {
       char* line = readLine();
 
       if (canReadBody(line, bodyLength)) {
+        delete[] line;
         return getBody(bodyLength);
       }
 
