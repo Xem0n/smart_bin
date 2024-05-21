@@ -1,6 +1,7 @@
 #include <Wire.h>
 #include <SPI.h>
 #include <ArduCAM.h>
+#include <SD.h>
 
 #include "ArduCAMWrapper.h"
 
@@ -116,4 +117,84 @@ SmartBin::ArduCAMWrapper::Image SmartBin::ArduCAMWrapper::captureImage(ArduCAM* 
   }
 
   return image;
+}
+
+String SmartBin::ArduCAMWrapper::saveImage(ArduCAM* cam) {
+  static int index = 0;
+
+  String filename = "/" + String(index++) + ".jpg";
+  File file = SD.open(filename, FILE_WRITE);
+
+  if (!file) {
+    Serial.println("Failed to open file for writing");
+    return "";
+  }
+
+  cam->flush_fifo();
+  cam->clear_fifo_flag();
+  cam->start_capture();
+
+  while(!cam->get_bit(ARDUCHIP_TRIG, CAP_DONE_MASK));
+
+  byte buffer[BUFFER_SIZE];
+  size_t length = cam->read_fifo_length();
+  size_t i = 0;
+  uint8_t temp = 0, temp_last = 0;
+  bool is_header = false;
+
+  Serial.print("Image size: ");
+  Serial.print(length / 1024);
+  Serial.println(" kb");
+
+  if (length >= MAX_FIFO_SIZE) { // 384 kb
+    Serial.println(F("Over size."));
+    return "";
+  } else if (length == 0) {
+    Serial.println(F("Size is 0."));
+    return "";
+  }
+
+  cam->CS_LOW();
+  cam->set_fifo_burst();
+
+  while (length--) {
+    temp_last = temp;
+    temp = SPI.transfer(0x00);
+    //Read JPEG data from FIFO
+    if ((temp == 0xD9) && (temp_last == 0xFF)) { //If find the end, break while
+      buffer[i++] = temp;  //save the last  0XD9
+      //Write the remain bytes in the buffer
+      cam->CS_HIGH();
+
+      file.write(buffer, i);
+      file.close();
+      Serial.println("Image saved");
+
+      is_header = false;
+      i = 0;
+    }
+
+    if (is_header) {
+       //Write image data to buffer if not full
+      if (i < BUFFER_SIZE) {
+        buffer[i++] = temp;
+      } else {
+        //Write 256 bytes image data to client
+        cam->CS_HIGH();
+        file.write(buffer, BUFFER_SIZE);
+
+        i = 0;
+        buffer[i++] = temp;
+
+        cam->CS_LOW();
+        cam->set_fifo_burst();
+      }
+    } else if ((temp == 0xD8) & (temp_last == 0xFF)) {
+      is_header = true;
+      buffer[i++] = temp_last;
+      buffer[i++] = temp;
+    }
+  }
+
+  return filename;
 }

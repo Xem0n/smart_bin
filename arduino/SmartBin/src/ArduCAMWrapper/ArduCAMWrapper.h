@@ -12,6 +12,7 @@ namespace SmartBin {
 
     ArduCAM init(int chipSelectPin);
     Image captureImage(ArduCAM* cam);
+    String saveImage(ArduCAM* cam);
   }
 }
 
