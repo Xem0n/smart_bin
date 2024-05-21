@@ -30,7 +30,7 @@ namespace SmartBin {
     const char* host;
     int port;
     WiFiClient client;
-    byte buffer[256];
+    byte buffer[64];
     bool waitingForResponse = false;
 
     void writeImage(ArduCAMWrapper::Image image);

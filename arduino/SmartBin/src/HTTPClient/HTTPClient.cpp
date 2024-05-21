@@ -7,7 +7,7 @@
 
 #include "HTTPClient.h"
 
-#define BUFFER_SIZE 256
+#define BUFFER_SIZE 64
 
 namespace SmartBin {
   HTTPClient::HTTPClient(const char* host, int port) {
@@ -20,7 +20,9 @@ namespace SmartBin {
   }
 
   void HTTPClient::sendRequest(ArduCAMWrapper::Image image) {
+    Serial.println("Try sending...");
     if (client.connect(host, port)) {
+      Serial.println("Connected!");
       client.println("POST / HTTP/1.1");
       client.print("Host: ");
       client.println(host);
@@ -35,6 +37,8 @@ namespace SmartBin {
   }
 
   void HTTPClient::writeImage(ArduCAMWrapper::Image image) {
+    Serial.println("Writing image to server...");
+    memset(buffer, 0, BUFFER_SIZE);
     size_t length = image.length;
 
     while (length > 0) {
@@ -69,6 +73,7 @@ namespace SmartBin {
       return HTTPResponse(type);
     }
 
+    delete[] body;
     return NO_BODY;
   }
 

@@ -71,6 +71,10 @@ SmartBin::ArduCAMWrapper::Image SmartBin::ArduCAMWrapper::captureImage(ArduCAM* 
   image.data = new byte[length];
   image.length = length;
 
+  Serial.print("Image size: ");
+  Serial.print(length / 1024);
+  Serial.println(" kb");
+
   cam->CS_LOW();
   cam->set_fifo_burst();
 
