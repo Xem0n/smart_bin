@@ -1,4 +1,3 @@
-#include <Wire.h>
 #include <SPI.h>
 #include <ArduCAM.h>
 #include <SD.h>
