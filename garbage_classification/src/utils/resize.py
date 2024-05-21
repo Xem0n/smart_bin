@@ -9,12 +9,16 @@ load_dotenv()
 DEST_IMG_WIDTH = int(os.getenv('IMAGE_WIDTH'))
 DEST_IMG_HEIGHT = int(os.getenv('IMAGE_HEIGHT'))
 
-def resize_directory(source_directory, target_directory, mode):
+def resize_directory(source_directory, target_directory, mode, grayscale):
     files = [f for f in os.listdir(source_directory) if path.isfile(path.join(source_directory, f))]
 
     for file in files:
         with Image.open(path.join(source_directory, file)) as img:
             img = resize(img, mode)
+
+            if grayscale:
+                img = img.convert('L')
+
             img.save(path.join(target_directory, file))
 
 def resize(img, mode):
@@ -95,10 +99,17 @@ def main():
         default='fill',
         choices=['fill', 'scale'],
     )
+    parser.add_argument(
+        '-g',
+        '--grayscale',
+        help='Whether should be grayscale.',
+        default=False,
+        action='store_true',
+    )
 
     args = parser.parse_args()
 
-    resize_directory(args.source, args.target, args.mode)
+    resize_directory(args.source, args.target, args.mode, args.grayscale)
 
 if __name__ == '__main__':
     main()
