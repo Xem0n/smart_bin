@@ -8,23 +8,25 @@ export default function App() {
   const [resources, setResources] = useState<Resources>();
   const [activeBin, setActiveBin] = useState<string | undefined>();
 
-  const fetch = async () => {
+  const fetchData = async () => {
     try {
       const data = await fetchResources();
       setResources(data);
+
+      return data;
     } catch (error) {
       console.error(error);
     }
   };
 
   useEffect(() => {
-    fetch()
-      .then(() => setActiveBin(resources?.bins[0].id))
+    fetchData()
+      .then((resources) => setActiveBin(resources?.bins[0].id))
       .catch(console.error);
-  });
+  }, []);
 
   return (
-    <ResourcesContext.Provider value={{ data: resources, update: fetch }}>
+    <ResourcesContext.Provider value={{ data: resources, update: fetchData }}>
       <ActiveBinContext.Provider
         value={{ data: activeBin, update: setActiveBin }}
       >
