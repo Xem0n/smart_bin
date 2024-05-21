@@ -34,6 +34,7 @@ namespace SmartBin {
       writeImage(image);
 
       waitingForResponse = true;
+      sentTimestamp = millis();
     }
   }
 
@@ -53,6 +54,7 @@ namespace SmartBin {
       writeFile(file);
 
       waitingForResponse = true;
+      sentTimestamp = millis();
     }
 
     file.close();
