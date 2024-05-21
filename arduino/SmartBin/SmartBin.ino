@@ -47,8 +47,7 @@ void setup() {
 
   myCam = ArduCAMWrapper::init(ARDUCAM_PIN);
 
-  // if (!SDWrapper::init(SD_PIN) || !WiFiWrapper::init(ssid, pass)) {
-  if (!WiFiWrapper::init(ssid, pass)) {
+  if (!SDWrapper::init(SD_PIN) || !WiFiWrapper::init(ssid, pass)) {
     Serial.println("Initialization failed!");
     delay(60000);
   }
