@@ -16,7 +16,7 @@ namespace SmartBin {
     PLASTIC = 3,
     NO_REQUEST,
     DISCONNECTED,
-    NO_BODY
+    WAITING,
   };
 
   class HTTPClient {
