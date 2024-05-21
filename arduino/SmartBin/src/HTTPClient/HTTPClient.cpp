@@ -26,6 +26,7 @@ namespace SmartBin {
       client.println(host);
       client.println("Content-Type: image/jpeg");
       client.println("Content-Length: " + String(image.length));
+      client.println("Mac-Address: " + getMacAddress());
       client.println();
       writeImage(image);
 
@@ -140,5 +141,22 @@ namespace SmartBin {
     body[length] = '\0';
 
     return body;
+  }
+
+  String HTTPClient::getMacAddress() {
+    byte mac[6];
+    WiFi.macAddress(mac);
+
+    String macAddress = "";
+
+    for (int i = 5; i >= 0; i--) {
+      macAddress += String(mac[i], HEX);
+
+      if (i > 0) {
+        macAddress += ":";
+      }
+    }
+
+    return macAddress;
   }
 }

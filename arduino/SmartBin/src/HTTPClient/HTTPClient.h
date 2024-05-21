@@ -40,6 +40,7 @@ namespace SmartBin {
     bool canReadBody(char* line, size_t bodyLength);
     bool isContentLength(char* line);
     size_t getContentLength(char* line);
+    String getMacAddress();
   };
 }
 
