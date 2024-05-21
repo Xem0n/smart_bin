@@ -17,6 +17,7 @@ namespace SmartBin {
     NO_REQUEST,
     DISCONNECTED,
     WAITING,
+    TIMEOUT,
   };
 
   class HTTPClient {

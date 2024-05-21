@@ -110,7 +110,7 @@ namespace SmartBin {
     }
 
     delete[] body;
-    return NO_BODY;
+    return WAITING;
   }
 
   char* HTTPClient::parseResponse() {
