@@ -38,3 +38,7 @@ export interface ColorPickerProps {
   current: string;
   update: (color: string) => void;
 }
+
+export interface GarbageChartProps {
+  data: BinData | undefined;
+}
