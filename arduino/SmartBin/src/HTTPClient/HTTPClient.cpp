@@ -36,6 +36,27 @@ namespace SmartBin {
     }
   }
 
+  void HTTPClient::sendRequest(String imagePath) {
+    File file = SD.open(imagePath, FILE_READ);
+
+    Serial.println("Try sending...");
+    if (client.connect(host, port)) {
+      Serial.println("Connected!");
+      client.println("POST / HTTP/1.1");
+      client.print("Host: ");
+      client.println(host);
+      client.println("Content-Type: image/jpeg");
+      client.println("Content-Length: " + String(file.size()));
+      client.println("Mac-Address: " + getMacAddress());
+      client.println();
+      writeFile(file);
+
+      waitingForResponse = true;
+    }
+
+    file.close();
+  }
+
   void HTTPClient::writeImage(ArduCAMWrapper::Image image) {
     Serial.println("Writing image to server...");
     memset(buffer, 0, BUFFER_SIZE);
@@ -45,6 +66,21 @@ namespace SmartBin {
       size_t size = min(BUFFER_SIZE, length);
 
       memcpy(buffer, image.data + image.length - length, size);
+      client.write(buffer, size);
+
+      length -= size;
+    }
+  }
+
+  void HTTPClient::writeFile(File file) {
+    Serial.println("Writing file to server...");
+    memset(buffer, 0, BUFFER_SIZE);
+    size_t length = file.size();
+
+    while (length > 0) {
+      size_t size = min(BUFFER_SIZE, length);
+
+      file.read(buffer, size);
       client.write(buffer, size);
 
       length -= size;

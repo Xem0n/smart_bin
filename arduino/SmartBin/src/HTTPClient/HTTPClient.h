@@ -5,6 +5,7 @@
 #include <SPI.h>
 #include <WiFiNINA.h>
 #include <ArduCAM.h>
+#include <SD.h>
 #include "../ArduCAMWrapper/ArduCAMWrapper.h"
 
 namespace SmartBin {
@@ -24,6 +25,7 @@ namespace SmartBin {
     ~HTTPClient();
 
     void sendRequest(ArduCAMWrapper::Image image);
+    void sendRequest(String imagePath);
     HTTPResponse handleResponse();
 
   private:
@@ -34,6 +36,7 @@ namespace SmartBin {
     bool waitingForResponse = false;
 
     void writeImage(ArduCAMWrapper::Image image);
+    void writeFile(File file);
     char* readLine();
     char* parseResponse();
     char* getBody(size_t length);
