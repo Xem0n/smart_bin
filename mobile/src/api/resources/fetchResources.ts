@@ -1,14 +1,10 @@
 import Resources from "./models/resources";
-import data from "./mock/resources.json";
 
-// todo: change to proper url
-// const URL = "./mock/resources.json";
+const URL = "http://192.168.100.208:5000/";
 
 export default async function fetchResources(): Promise<Resources> {
-  // const response = await fetch(URL);
-  // const resources = await response.json() as Resources;
-
-  const resources = data as Resources;
+  const response = await fetch(URL);
+  const resources = await response.json() as Resources;
 
   return resources;
 }
