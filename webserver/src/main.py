@@ -1,10 +1,13 @@
+from dotenv import load_dotenv
+load_dotenv()
+
 import uuid
 import numpy as np
 from flask import Flask, request
-from services.predictor import predict, convert_bytes_to_image_batch
+from services.predictor import predict
 from db.database import init_db, db_session
 from services.database import init_bin, add_garbage, get_bins_data
-from services.utils import unify_bin_data
+from services.utils import unify_bin_data, transform_image
 
 app = Flask(__name__)
 init_db()
@@ -23,24 +26,29 @@ def predict_image():
     print('start...')
     data = request.get_data()
     id = uuid.uuid4()
-    path = f'tmp/{id}.jpg'
-    print(path)
 
-    with open(path, 'wb') as f:
-        print('save')
+    print(id)
+
+    with open(f'tmp/{id}.jpg', 'wb') as f:
         f.write(data)
 
-    print('convert and predict')
-    image = convert_bytes_to_image_batch(data)
+    print('transform')
+    image = transform_image(id)
+
+    print('predict')
     prediction = predict(image)
 
     print(prediction)
     result = np.argmax(prediction)
 
+    add_garbage(request.headers.get('Mac-Address', ''), result)
+
     # result must be one bigger
     # bcuz strtol() in C fails to 0 value
     # which unables to check whether body is invalid or of type equal to 0
     return str(result + 1)
+
+    # return '0'
 
 if __name__ == '__main__':
     # make sure to allow port in firewall
