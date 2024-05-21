@@ -12,8 +12,16 @@ def init_bin(mac_address):
     db_session.add(bin)
     db_session.commit()
 
-def add_garbage(mac_address, type):
-    category = db_session.query(Category).filter(Category.bin_id == mac_address, Category.type_id == type).first()
+def add_garbage(mac_address, garbage_type):
+    if mac_address == '' or mac_address is None:
+        return
+
+    bin = db_session.query(Bin).filter(Bin.id == mac_address).first()
+
+    if bin is None:
+        init_bin(mac_address)
+
+    category = db_session.query(Category).filter(Category.bin_id == mac_address, Category.type_id == int(garbage_type) + 1).first()
     garbage = Garbage(id=str(uuid.uuid4()), category_id=category.id, created_at=int(time.time()))
 
     db_session.add(garbage)
