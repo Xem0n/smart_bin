@@ -18,6 +18,7 @@ namespace SmartBin {
     DISCONNECTED,
     WAITING,
     TIMEOUT,
+    NO_BODY,
   };
 
   class HTTPClient {
