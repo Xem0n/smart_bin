@@ -22,7 +22,7 @@ HTTPClient httpClient("192.168.109.106", 5000);
 ArduCAM myCam;
 StepperController stepperController;
 
-size_t lastSendTime = millis();
+size_t lastUpdateTime = 0;
 String lastImagePath = "";
 
 const char *garbageTypeMapping[] = {
@@ -30,6 +30,22 @@ const char *garbageTypeMapping[] = {
   "paper",
   "plastic"
 };
+
+enum LoopState {
+  LOOP_IDLE,
+  LOOP_SEND_IMAGE,
+  LOOP_HANDLE_RESPONSE,
+};
+
+LoopState loopState = LOOP_IDLE;
+
+void dropTest() {
+  stepperController.drop(0);
+  delay(1000);
+  stepperController.drop(1);
+  delay(1000);
+  stepperController.drop(2);
+}
 
 void setup() {
   Serial.begin(9600);
@@ -55,12 +71,32 @@ void setup() {
   Serial.println();
 }
 
-void dropTest() {
-  stepperController.drop(0);
-  delay(1000);
-  stepperController.drop(1);
-  delay(1000);
-  stepperController.drop(2);
+void loop() {
+  switch (loopState) {
+    case LOOP_IDLE:
+      idle();
+      break;
+    case LOOP_SEND_IMAGE:
+      sendImage();
+      // sendImageFromSD();
+      break;
+    case LOOP_HANDLE_RESPONSE:
+      handleResponse();
+      break;
+    default:
+      break;
+  }
+}
+
+void idle() {
+  size_t timestamp = millis();
+
+  if ((timestamp - lastUpdateTime) > SEND_INTERVAL) {
+    Serial.println("10s idle, sending image");
+
+    loopState = LOOP_SEND_IMAGE;
+    lastUpdateTime = timestamp;
+  }
 }
 
 void sendImage() {
@@ -70,10 +106,19 @@ void sendImage() {
   httpClient.sendRequest(image);
 
   delete[] image.data;
+
+  loopState = LOOP_HANDLE_RESPONSE;
 }
 
 void sendImageFromSD() {
   Serial.println("Sending image from SD...");
+
+  if (lastImagePath != "") {
+    httpClient.sendRequest(lastImagePath);
+
+    loopState = LOOP_HANDLE_RESPONSE;
+    return;
+  }
 
   String path = ArduCAMWrapper::saveImage(&myCam);
 
@@ -82,44 +127,67 @@ void sendImageFromSD() {
   }
 
   lastImagePath = path;
+  loopState = LOOP_HANDLE_RESPONSE;
 
   httpClient.sendRequest(path);
+}
+
+void handleResponse() {
+  HTTPResponse response = httpClient.handleResponse();
+
+  switch (response) {
+    case DISCONNECTED:
+      Serial.println("Disconnected. Sending once more.");
+
+      loopState = LOOP_SEND_IMAGE;
+      lastUpdateTime = millis();
+
+      break;
+    case TIMEOUT:
+      Serial.println("Timeout. Sending once more.");
+
+      loopState = LOOP_SEND_IMAGE;
+      lastUpdateTime = millis();
+
+      break;
+    case NO_REQUEST:
+      Serial.println("to sie tez nie powinno zdarzyc xd");
+
+      lastImagePath = "";
+      lastUpdateTime = millis();
+      loopState = LOOP_IDLE;
+
+      break;
+    case NO_BODY:
+      Serial.println("No body. Probably 400.");
+      break;
+    case WAITING:
+      break;
+    case UNKNOWN_TYPE:
+      Serial.println("Cos poszlo nie tak xd");
+      break;
+    default:
+      Serial.print("Response: ");
+      Serial.println(response);
+
+      if (isGarbageType(response)) {
+        handleGarbage(response);
+      }
+
+      lastImagePath = "";
+      lastUpdateTime = millis();
+      loopState = LOOP_IDLE;
+
+      break;
+  }
 }
 
 bool isGarbageType(HTTPResponse response) {
   return response >= 1 && response <= 3;
 }
 
-void loop() {
-  HTTPResponse response = httpClient.handleResponse();
-
-  if (isGarbageType(response)) {
-    Serial.print("Response: ");
+void handleGarbage(HTTPResponse response) {
     Serial.println(garbageTypeMapping[response - 1]);
 
     // stepperController.drop((int)response - 1);
-
-    lastImagePath = "";
-    lastSendTime = millis();
-  } else if (response == DISCONNECTED) {
-    Serial.println("Try once more...");
-
-    if (lastImagePath != "") {
-      httpClient.sendRequest(lastImagePath);
-    } else {
-      sendImage();
-    }
-
-    lastSendTime = millis();
-  } else if (response == NO_REQUEST) {
-    size_t timestamp = millis();
-
-    if ((timestamp - lastSendTime) > SEND_INTERVAL) {
-      Serial.println("10s idle, sending image");
-      sendImageFromSD();
-      lastSendTime = timestamp;
-    }
-  } else if (response == UNKNOWN_TYPE) {
-    Serial.println("Unknown type");
-  }
 }
