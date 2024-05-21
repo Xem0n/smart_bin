@@ -5,6 +5,7 @@ import { useState } from "react";
 import { TouchableWithoutFeedback } from "react-native-gesture-handler";
 import { Feather } from "@expo/vector-icons";
 import { BinData } from "../../api/resources";
+import updateBinInfo from "../../api/resources/updateBinInfo";
 
 export default function BinInfo(props: BinInfoProps) {
   const [data, setData] = useState<BinData>(props.data);
@@ -16,8 +17,7 @@ export default function BinInfo(props: BinInfoProps) {
     setData(newData);
     setExpanded(false);
 
-    // todo: send update request
-
+    updateBinInfo(newData).catch((error) => console.error(error));
     props.update();
   };
 
