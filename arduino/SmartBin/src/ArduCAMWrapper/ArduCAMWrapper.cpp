@@ -61,7 +61,7 @@ SmartBin::ArduCAMWrapper::Image SmartBin::ArduCAMWrapper::captureImage(ArduCAM* 
 
   while(!cam->get_bit(ARDUCHIP_TRIG, CAP_DONE_MASK));
 
-  byte* buffer = new byte[256];
+  byte buffer[BUFFER_SIZE];
   size_t length = cam->read_fifo_length();
   size_t initLength = length;
   size_t offset = 0;
