@@ -32,23 +32,25 @@ def predict_image():
     with open(f'tmp/{id}.jpg', 'wb') as f:
         f.write(data)
 
-    print('transform')
-    image = transform_image(id, data)
+    try:
+        print('transform')
+        image = transform_image(id, data)
 
-    print('predict')
-    prediction = predict(image)
+        print('predict')
+        prediction = predict(image)
 
-    print(prediction)
-    result = np.argmax(prediction)
+        print(prediction)
+        result = np.argmax(prediction)
 
-    add_garbage(request.headers.get('Mac-Address', ''), result)
+        add_garbage(request.headers.get('Mac-Address', ''), result)
 
-    # result must be one bigger
-    # bcuz strtol() in C fails to 0 value
-    # which unables to check whether body is invalid or of type equal to 0
-    return str(result + 1)
-
-    # return '0'
+        # result must be one bigger
+        # bcuz strtol() in C fails to 0 value
+        # which unables to check whether body is invalid or of type equal to 0
+        return str(result + 1)
+    except Exception as e:
+        print(e)
+        return '0'
 
 if __name__ == '__main__':
     # make sure to allow port in firewall
