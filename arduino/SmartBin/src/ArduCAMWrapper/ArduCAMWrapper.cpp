@@ -4,6 +4,8 @@
 
 #include "ArduCAMWrapper.h"
 
+#define BUFFER_SIZE 256
+
 ArduCAM SmartBin::ArduCAMWrapper::init(int chipSelectPin) {
   ArduCAM myCAM(OV2640, chipSelectPin);
 
@@ -94,13 +96,13 @@ SmartBin::ArduCAMWrapper::Image SmartBin::ArduCAMWrapper::captureImage(ArduCAM* 
 
     if (is_header == true) {
        //Write image data to buffer if not full
-      if (i < 256) {
+      if (i < BUFFER_SIZE) {
         buffer[i++] = temp;
       } else {
         //Write 256 bytes image data to client
         cam->CS_HIGH();
-        memcpy(image.data + offset, buffer, 256);
-        offset += 256;
+        memcpy(image.data + offset, buffer, BUFFER_SIZE);
+        offset += BUFFER_SIZE;
         i = 0;
         buffer[i++] = temp;
         cam->CS_LOW();
