@@ -36,7 +36,7 @@ namespace SmartBin {
     }
   }
 
-  void HTTPClient::sendRequest(String imagePath) {
+  void HTTPClient::sendRequest(String filePath) {
     File file = SD.open(imagePath, FILE_READ);
 
     Serial.println("Try sending...");

@@ -25,7 +25,7 @@ namespace SmartBin {
     ~HTTPClient();
 
     void sendRequest(ArduCAMWrapper::Image image);
-    void sendRequest(String imagePath);
+    void sendRequest(String filePath);
     HTTPResponse handleResponse();
 
   private:
