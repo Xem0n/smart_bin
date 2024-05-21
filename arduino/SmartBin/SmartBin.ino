@@ -47,22 +47,21 @@ void setup() {
 
   myCam = ArduCAMWrapper::init(ARDUCAM_PIN);
 
-  // if (!SDWrapper::init(SD_PIN) || !WiFiWrapper::init(ssid, pass)) {
-  if (!WiFiWrapper::init(ssid, pass)) {
+  if (!SDWrapper::init(SD_PIN) || !WiFiWrapper::init(ssid, pass)) {
     Serial.println("Initialization failed!");
     delay(60000);
   }
 
   Serial.println("Initialization done!");
   Serial.println();
+}
 
-  // stepperController.drop(0);
-  // delay(1000);
-  // stepperController.drop(1);
-  // delay(1000);
-  // stepperController.drop(2);
-
-  // sendImage();
+void dropTest() {
+  stepperController.drop(0);
+  delay(1000);
+  stepperController.drop(1);
+  delay(1000);
+  stepperController.drop(2);
 }
 
 void sendImage() {
