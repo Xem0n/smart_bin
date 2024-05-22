@@ -13,7 +13,8 @@ export default function GarbageChart(props: GarbageChartProps) {
   const datasets =
     props.data?.categories.map((category) => {
       const values = [...Array(24).keys()].map(() => ({
-        value: Math.floor(Math.random() * 15),
+        // value: Math.floor(Math.random() * 15),
+        value: 0,
       }));
 
       for (const garbage of category.garbages) {
@@ -50,7 +51,7 @@ export default function GarbageChart(props: GarbageChartProps) {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 3,
+    flex: 4,
     alignItems: "center",
     justifyContent: "flex-start",
     flexDirection: "column",
@@ -73,7 +74,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: "#828282",
 
-    marginTop: 50,
+    marginTop: 40,
   },
   chart: {
     backgroundColor: "#fff",
