@@ -86,7 +86,7 @@ void loop() {
       // sendImageFromSD();
       break;
     case LOOP_WAIT_FOR_GARBAGE_TYPE:
-      handleResponse(LOOP_WAIT_FOR_GARBAGE_TYPE, LOOP_IDLE, receiveGarbageType);
+      handleResponse(LOOP_SEND_IMAGE, LOOP_IDLE, receiveGarbageType);
       break;
     default:
       break;
