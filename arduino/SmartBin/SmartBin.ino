@@ -120,6 +120,8 @@ void idle() {
     Serial.println("Detected.");
 
     loopState = LOOP_SEND_IMAGE;
+  } else {
+    delay(5);
   }
 }
 
