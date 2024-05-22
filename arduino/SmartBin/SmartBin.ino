@@ -1,6 +1,7 @@
 #include <Wire.h>
 #include <SPI.h>
 #include <ArduCAM.h>
+#include <RGBLed.h>
 
 #include "src/WiFiWrapper/WiFiWrapper.h"
 #include "src/SDWrapper/SDWrapper.h"
@@ -22,6 +23,7 @@ char ssid[] = "airbag";
 char pass[] = "glebogryzarka";
 
 HTTPClient httpClient("192.168.109.106", 5000);
+RGBLed mainLed(7, 8, 9, false);
 ArduCAM myCam;
 StepperController stepperController;
 
@@ -66,6 +68,7 @@ void setup() {
   SPI.begin();
   delay(3000);
 
+  mainLed.setColor(binColor[0], binColor[1], binColor[2]);
   myCam = ArduCAMWrapper::init(ARDUCAM_PIN);
 
   if (!SDWrapper::init(SD_PIN) || !WiFiWrapper::init(ssid, pass)) {
@@ -227,8 +230,7 @@ void receiveBinColor(HTTPResponse response) {
   Serial.print(", ");
   Serial.println(binColor[2]);
 
-  // set led color to binColor
-  // ...
+  mainLed.setColor(binColor[0], binColor[1], binColor[2]);
 }
 
 bool isGarbageType(int garbageType) {
