@@ -103,7 +103,7 @@ void sendImage() {
   Serial.println("Sending image...");
 
   ArduCAMWrapper::Image image = ArduCAMWrapper::captureImage(&myCam);
-  httpClient.sendRequest(image);
+  httpClient.sendImage(image);
 
   delete[] image.data;
 
@@ -114,7 +114,7 @@ void sendImageFromSD() {
   Serial.println("Sending image from SD...");
 
   if (lastImagePath != "") {
-    httpClient.sendRequest(lastImagePath);
+    httpClient.sendImage(lastImagePath);
 
     loopState = LOOP_HANDLE_RESPONSE;
     return;
@@ -129,7 +129,7 @@ void sendImageFromSD() {
   lastImagePath = path;
   loopState = LOOP_HANDLE_RESPONSE;
 
-  httpClient.sendRequest(path);
+  httpClient.sendImage(path);
 }
 
 void handleResponse() {

@@ -20,7 +20,7 @@ namespace SmartBin {
     // Destructor
   }
 
-  void HTTPClient::sendRequest(ArduCAMWrapper::Image image) {
+  void HTTPClient::sendImage(ArduCAMWrapper::Image image) {
     Serial.println("Try sending...");
     if (client.connect(host, port)) {
       Serial.println("Connected!");
@@ -38,7 +38,7 @@ namespace SmartBin {
     }
   }
 
-  void HTTPClient::sendRequest(String filePath) {
+  void HTTPClient::sendImage(String filePath) {
     File file = SD.open(filePath, FILE_READ);
 
     Serial.println("Try sending...");
