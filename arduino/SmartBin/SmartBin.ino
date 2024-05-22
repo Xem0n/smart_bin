@@ -24,6 +24,7 @@ StepperController stepperController;
 
 size_t lastUpdateTime = 0;
 String lastImagePath = "";
+uint8_t binColor[3] = {0, 0, 0};
 
 const char *garbageTypeMapping[] = {
   "metal",
@@ -35,6 +36,7 @@ enum LoopState {
   LOOP_IDLE,
   LOOP_SEND_IMAGE,
   LOOP_WAIT_FOR_GARBAGE_TYPE,
+  LOOP_WAIT_FOR_COLOR,
 };
 
 LoopState loopState = LOOP_IDLE;
@@ -81,7 +83,7 @@ void loop() {
       // sendImageFromSD();
       break;
     case LOOP_WAIT_FOR_GARBAGE_TYPE:
-      handleResponse();
+      handleResponse(LOOP_WAIT_FOR_GARBAGE_TYPE, LOOP_IDLE, receiveGarbageType);
       break;
     default:
       break;
@@ -132,21 +134,21 @@ void sendImageFromSD() {
   httpClient.sendImage(path);
 }
 
-void handleResponse() {
+void handleResponse(LoopState fallbackState, LoopState successState, void (*callback)(HTTPResponse)) {
   HTTPResponse response = httpClient.handleResponse();
 
   switch (response) {
     case DISCONNECTED:
       Serial.println("Disconnected. Sending once more.");
 
-      loopState = LOOP_SEND_IMAGE;
+      loopState = fallbackState;
       lastUpdateTime = millis();
 
       break;
     case TIMEOUT:
       Serial.println("Timeout. Sending once more.");
 
-      loopState = LOOP_SEND_IMAGE;
+      loopState = fallbackState;
       lastUpdateTime = millis();
 
       break;
@@ -155,7 +157,7 @@ void handleResponse() {
 
       lastImagePath = "";
       lastUpdateTime = millis();
-      loopState = LOOP_IDLE;
+      loopState = successState;
 
       break;
     case NO_BODY:
@@ -170,16 +172,24 @@ void handleResponse() {
       Serial.print("Response: ");
       Serial.println(response);
 
-      if (isGarbageType(response)) {
-        handleGarbage(response);
-      }
+      (*callback)(response);
 
       lastImagePath = "";
       lastUpdateTime = millis();
-      loopState = LOOP_IDLE;
+      loopState = successState;
 
       break;
   }
+}
+
+void receiveGarbageType(HTTPResponse response) {
+  if (isGarbageType(response)) {
+    handleGarbage(response);
+  }
+}
+
+void receiveBinColor(HTTPResponse response) {
+  // ...
 }
 
 bool isGarbageType(HTTPResponse response) {
