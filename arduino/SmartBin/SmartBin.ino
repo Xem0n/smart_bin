@@ -8,6 +8,7 @@
 #include "src/ArduCAMWrapper/ArduCAMWrapper.h"
 #include "src/HTTPClient/HTTPClient.h"
 #include "src/StepperController/StepperController.h"
+#include "src/Sensor/Sensor.h"
 
 using namespace SmartBin;
 
@@ -26,6 +27,7 @@ HTTPClient httpClient("192.168.109.106", 5000);
 RGBLed mainLed(7, 8, 9, false);
 ArduCAM myCam;
 StepperController stepperController;
+Sensor sensor(A0, 10);
 
 size_t lastUpdateTime = 0;
 String lastImagePath = "";
@@ -70,6 +72,7 @@ void setup() {
 
   mainLed.setColor(binColor[0], binColor[1], binColor[2]);
   myCam = ArduCAMWrapper::init(ARDUCAM_PIN);
+  sensor.init();
 
   if (!SDWrapper::init(SD_PIN) || !WiFiWrapper::init(ssid, pass)) {
     Serial.println("Initialization failed!");
@@ -104,13 +107,19 @@ void loop() {
 }
 
 void idle() {
-  size_t timestamp = millis();
+  // size_t timestamp = millis();
 
-  if ((timestamp - lastUpdateTime) > SEND_INTERVAL) {
-    Serial.println("10s idle, sending image");
+  // if ((timestamp - lastUpdateTime) > SEND_INTERVAL) {
+  //   Serial.println("10s idle, sending image");
+  //
+  //   loopState = LOOP_SEND_IMAGE;
+  //   lastUpdateTime = timestamp;
+  // }
+
+  if (sensor.detect()) {
+    Serial.println("Detected.");
 
     loopState = LOOP_SEND_IMAGE;
-    lastUpdateTime = timestamp;
   }
 }
 
