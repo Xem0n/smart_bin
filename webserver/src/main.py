@@ -7,7 +7,7 @@ from flask import Flask, request
 from services.predictor import predict
 from db.database import init_db, db_session
 from services.database import init_bin, add_garbage, get_bins_data, get_bin_data, update_bin
-from services.utils import unify_bin_data, transform_image
+from services.utils import get_bin_data_dto, transform_image
 
 app = Flask(__name__)
 init_db()
@@ -18,8 +18,9 @@ def shutdown_session(exception=None):
 
 @app.get('/')
 def get_data():
-    (bins, categories, garbages) = get_bins_data()
-    return unify_bin_data(bins, categories, garbages)
+    bins = get_bins_data()
+
+    return get_bin_data_dto(bins)
 
 @app.get('/bin/<mac_address>')
 def get_bin_color(mac_address):

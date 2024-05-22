@@ -16,7 +16,7 @@ def transform_image(id, bytes):
 def get_color_mode():
     return 'RGB' if os.getenv('COLOR_MODE') == 'rgb' else 'L'
 
-def unify_bin_data(bins, categories, garbages):
+def get_bin_data_dto(bins):
     return {
         'bins': [
             {
@@ -33,10 +33,10 @@ def unify_bin_data(bins, categories, garbages):
                                 'id': garbage.id,
                                 'created_at': garbage.created_at,
                             }
-                            for garbage in garbages if garbage.category_id == category.id
+                            for garbage in category.garbages
                         ],
                     }
-                    for category in categories if category.bin_id == bin.id
+                    for category in bin.categories
                 ],
             }
             for bin in bins

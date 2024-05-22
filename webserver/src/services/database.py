@@ -29,10 +29,8 @@ def add_garbage(mac_address, garbage_type):
 
 def get_bins_data():
     bins = db_session.query(Bin).all()
-    categories = db_session.query(Category).all()
-    garbages = db_session.query(Garbage).all()
 
-    return bins, categories, garbages
+    return bins
 
 def get_bin_data(mac_address):
     bin = db_session.query(Bin).filter(Bin.id == mac_address).first()
