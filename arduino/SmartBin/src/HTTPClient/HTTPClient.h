@@ -9,16 +9,19 @@
 #include "../ArduCAMWrapper/ArduCAMWrapper.h"
 
 namespace SmartBin {
-  enum HTTPResponse {
-    UNKNOWN_TYPE = 0,
-    METAL = 1,
-    PAPER = 2,
-    PLASTIC = 3,
+  enum ResponseType {
+    OK,
+    UNKNOWN_TYPE,
     NO_REQUEST,
     DISCONNECTED,
     WAITING,
     TIMEOUT,
     NO_BODY,
+  };
+
+  struct HTTPResponse {
+    ResponseType type;
+    char* body;
   };
 
   class HTTPClient {

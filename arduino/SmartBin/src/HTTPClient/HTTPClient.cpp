@@ -107,42 +107,46 @@ namespace SmartBin {
   }
 
   HTTPResponse HTTPClient::handleResponse() {
+    HTTPResponse response;
+
     if (!waitingForResponse) {
-      return NO_REQUEST;
+      response.type = NO_REQUEST;
+      return response;
     }
 
     if (!client.connected()) {
       client.stop();
       waitingForResponse = false;
 
-      return DISCONNECTED;
+      response.type = DISCONNECTED;
+      return response;
     }
 
     if (client.available()) {
-      char* body = parseResponse();
+      response.body = parseResponse();
 
       client.stop();
       waitingForResponse = false;
 
-      if (body != nullptr) {
-        int type = strtol(body, nullptr, 10);
-
-        delete[] body;
-
-        return HTTPResponse(type);
+      if (response.body != nullptr) {
+        response.type = OK;
+        return response;
       }
 
-      delete[] body;
+      delete[] response.body;
 
-      return NO_BODY;
+      response.type = NO_BODY;
+      return response;
     } else if ((millis() - sentTimestamp) > TIMEOUT_LIMIT) {
       client.stop();
       waitingForResponse = false;
 
-      return TIMEOUT;
+      response.type = TIMEOUT;
+      return response;
     }
 
-    return WAITING;
+    response.type = WAITING;
+    return response;
   }
 
   char* HTTPClient::parseResponse() {

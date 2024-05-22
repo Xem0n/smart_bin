@@ -15,6 +15,9 @@ using namespace SmartBin;
 
 #define SEND_INTERVAL 10000
 
+// todo:
+//  - repeat request for bin color
+
 char ssid[] = "airbag";
 char pass[] = "glebogryzarka";
 
@@ -137,7 +140,7 @@ void sendImageFromSD() {
 void handleResponse(LoopState fallbackState, LoopState successState, void (*callback)(HTTPResponse)) {
   HTTPResponse response = httpClient.handleResponse();
 
-  switch (response) {
+  switch (response.type) {
     case DISCONNECTED:
       Serial.println("Disconnected. Sending once more.");
 
@@ -153,7 +156,7 @@ void handleResponse(LoopState fallbackState, LoopState successState, void (*call
 
       break;
     case NO_REQUEST:
-      Serial.println("to sie tez nie powinno zdarzyc xd");
+      Serial.println("to sie tez nie powinno zdarzyc xd. nie wiem jak to obsluzyc");
 
       lastImagePath = "";
       lastUpdateTime = millis();
@@ -168,9 +171,9 @@ void handleResponse(LoopState fallbackState, LoopState successState, void (*call
     case UNKNOWN_TYPE:
       Serial.println("Cos poszlo nie tak xd");
       break;
-    default:
+    case OK:
       Serial.print("Response: ");
-      Serial.println(response);
+      Serial.println(response.body);
 
       (*callback)(response);
 
@@ -179,12 +182,18 @@ void handleResponse(LoopState fallbackState, LoopState successState, void (*call
       loopState = successState;
 
       break;
+    default:
+      break;
   }
+
+  delete[] response.body;
 }
 
 void receiveGarbageType(HTTPResponse response) {
-  if (isGarbageType(response)) {
-    handleGarbage(response);
+  int type = strtol(response.body, nullptr, 10);
+
+  if (isGarbageType(type)) {
+    handleGarbage(type);
   }
 }
 
@@ -192,12 +201,12 @@ void receiveBinColor(HTTPResponse response) {
   // ...
 }
 
-bool isGarbageType(HTTPResponse response) {
-  return response >= 1 && response <= 3;
+bool isGarbageType(int garbageType) {
+  return garbageType >= 1 && garbageType <= 3;
 }
 
-void handleGarbage(HTTPResponse response) {
-    Serial.println(garbageTypeMapping[response - 1]);
+void handleGarbage(int garbageType) {
+    Serial.println(garbageTypeMapping[garbageType - 1]);
 
-    // stepperController.drop((int)response - 1);
+    // stepperController.drop(garbageType - 1);
 }
