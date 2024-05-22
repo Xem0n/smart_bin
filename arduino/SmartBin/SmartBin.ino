@@ -34,7 +34,7 @@ const char *garbageTypeMapping[] = {
 enum LoopState {
   LOOP_IDLE,
   LOOP_SEND_IMAGE,
-  LOOP_HANDLE_RESPONSE,
+  LOOP_WAIT_FOR_GARBAGE_TYPE,
 };
 
 LoopState loopState = LOOP_IDLE;
@@ -80,7 +80,7 @@ void loop() {
       sendImage();
       // sendImageFromSD();
       break;
-    case LOOP_HANDLE_RESPONSE:
+    case LOOP_WAIT_FOR_GARBAGE_TYPE:
       handleResponse();
       break;
     default:
@@ -107,7 +107,7 @@ void sendImage() {
 
   delete[] image.data;
 
-  loopState = LOOP_HANDLE_RESPONSE;
+  loopState = LOOP_WAIT_FOR_GARBAGE_TYPE;
 }
 
 void sendImageFromSD() {
@@ -116,7 +116,7 @@ void sendImageFromSD() {
   if (lastImagePath != "") {
     httpClient.sendImage(lastImagePath);
 
-    loopState = LOOP_HANDLE_RESPONSE;
+    loopState = LOOP_WAIT_FOR_GARBAGE_TYPE;
     return;
   }
 
@@ -127,7 +127,7 @@ void sendImageFromSD() {
   }
 
   lastImagePath = path;
-  loopState = LOOP_HANDLE_RESPONSE;
+  loopState = LOOP_WAIT_FOR_GARBAGE_TYPE;
 
   httpClient.sendImage(path);
 }
