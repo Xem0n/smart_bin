@@ -39,6 +39,7 @@ enum LoopState {
   LOOP_IDLE,
   LOOP_SEND_IMAGE,
   LOOP_WAIT_FOR_GARBAGE_TYPE,
+  LOOP_REQUEST_COLOR,
   LOOP_WAIT_FOR_COLOR,
 };
 
@@ -85,8 +86,14 @@ void loop() {
       sendImage();
       // sendImageFromSD();
       break;
+    case LOOP_REQUEST_COLOR:
+      requestColor();
+      break;
     case LOOP_WAIT_FOR_GARBAGE_TYPE:
       handleResponse(LOOP_SEND_IMAGE, LOOP_IDLE, receiveGarbageType);
+      break;
+    case LOOP_WAIT_FOR_COLOR:
+      handleResponse(LOOP_REQUEST_COLOR, LOOP_IDLE, receiveBinColor);
       break;
     default:
       break;
@@ -135,6 +142,12 @@ void sendImageFromSD() {
   loopState = LOOP_WAIT_FOR_GARBAGE_TYPE;
 
   httpClient.sendImage(path);
+}
+
+void requestColor() {
+  httpClient.getColor();
+
+  loopState = LOOP_WAIT_FOR_COLOR;
 }
 
 void handleResponse(LoopState fallbackState, LoopState successState, void (*callback)(HTTPResponse)) {
@@ -198,6 +211,23 @@ void receiveGarbageType(HTTPResponse response) {
 }
 
 void receiveBinColor(HTTPResponse response) {
+  char colorHex[3];
+
+  for (int i = 0; i < 3; i++) {
+    memcpy(colorHex, &response.body[i * 2 + 1], 2);
+    colorHex[2] = '\0';
+
+    binColor[i] = strtol(colorHex, nullptr, 16);
+  }
+
+  Serial.print("Bin color: ");
+  Serial.print(binColor[0]);
+  Serial.print(", ");
+  Serial.print(binColor[1]);
+  Serial.print(", ");
+  Serial.println(binColor[2]);
+
+  // set led color to binColor
   // ...
 }
 
