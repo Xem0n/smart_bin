@@ -24,7 +24,7 @@ StepperController stepperController;
 
 size_t lastUpdateTime = 0;
 String lastImagePath = "";
-uint8_t binColor[3] = {0, 0, 0};
+uint8_t binColor[3] = {255, 255, 255};
 
 const char *garbageTypeMapping[] = {
   "metal",
