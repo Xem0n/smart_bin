@@ -6,7 +6,7 @@ import numpy as np
 from flask import Flask, request
 from services.predictor import predict
 from db.database import init_db, db_session
-from services.database import init_bin, add_garbage, get_bins_data, update_bin
+from services.database import init_bin, add_garbage, get_bins_data, get_bin_data, update_bin
 from services.utils import unify_bin_data, transform_image
 
 app = Flask(__name__)
@@ -20,6 +20,15 @@ def shutdown_session(exception=None):
 def get_data():
     (bins, categories, garbages) = get_bins_data()
     return unify_bin_data(bins, categories, garbages)
+
+@app.get('/bin/<mac_address>')
+def get_bin_color(mac_address):
+    try:
+        bin = get_bin_data(mac_address)
+
+        return bin.color
+    except:
+        return '#000000', 404
 
 @app.post('/update')
 def update_bin_info():

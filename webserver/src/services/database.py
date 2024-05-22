@@ -34,6 +34,11 @@ def get_bins_data():
 
     return bins, categories, garbages
 
+def get_bin_data(mac_address):
+    bin = db_session.query(Bin).filter(Bin.id == mac_address).first()
+
+    return bin
+
 def update_bin(mac_address, name, color):
     db_session.query(Bin).filter(Bin.id == mac_address).update({Bin.name: name, Bin.color: color})
     db_session.commit()
