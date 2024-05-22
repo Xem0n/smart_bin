@@ -16,6 +16,11 @@ init_db()
 def shutdown_session(exception=None):
     db_session.remove()
 
+@app.post('/init')
+def test_init():
+    init_bin('test')
+    return 'ok'
+
 @app.get('/')
 def get_data():
     bins = get_bins_data()
