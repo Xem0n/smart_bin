@@ -2,8 +2,7 @@ import { StyleSheet, Text, View } from "react-native";
 import Arrow from "./Arrow";
 import Calendar from "./Calendar";
 import { DatePickerProps } from "../../types/props";
-import Months from "../../constants/months";
-import { FullWeekDays } from "../../constants/week_days";
+import { Months, FullWeekDays } from "../../constants";
 import modulo from "../../utils/modulo";
 
 export default function DatePicker(props: DatePickerProps) {

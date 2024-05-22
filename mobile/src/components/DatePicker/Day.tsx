@@ -1,6 +1,6 @@
 import { StyleSheet, Text } from "react-native";
 import { DayProps } from "../../types/props";
-import { ShortWeekDays } from "../../constants/week_days";
+import { ShortWeekDays } from "../../constants";
 import modulo from "../../utils/modulo";
 import { TouchableWithoutFeedback } from "react-native-gesture-handler";
 

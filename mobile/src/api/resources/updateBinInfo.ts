@@ -1,4 +1,4 @@
-import { URL } from "../../constants/api";
+import { URL } from "../../constants";
 import BinData from "./models/bin_data";
 
 export default async function updateBinInfo(data: BinData) {

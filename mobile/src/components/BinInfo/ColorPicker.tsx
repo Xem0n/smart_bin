@@ -1,6 +1,6 @@
 import { StyleSheet, View } from "react-native";
 import { TouchableWithoutFeedback } from "react-native-gesture-handler";
-import PredefinedColors from "../../constants/predefined_colors";
+import { PredefinedColors } from "../../constants";
 import { ColorPickerProps } from "../../types/props";
 import { useState } from "react";
 
