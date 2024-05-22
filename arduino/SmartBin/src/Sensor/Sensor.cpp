@@ -3,10 +3,7 @@
 #define MAX_DISTANCE 100 // in centimeters
 
 namespace SmartBin {
-  Sensor::Sensor(const int trigPin, const int echoPin) : trigPin(trigPin), echoPin(echoPin) {
-    this->trigPin = trigPin;
-    this->echoPin = echoPin;
-  }
+  Sensor::Sensor(const int trigPin, const int echoPin) : trigPin(trigPin), echoPin(echoPin) {}
 
   Sensor::~Sensor() {
     // Destructor

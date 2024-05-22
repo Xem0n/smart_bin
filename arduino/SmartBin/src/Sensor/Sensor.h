@@ -13,8 +13,8 @@ namespace SmartBin {
     bool detect();
 
   private:
-    int trigPin;
-    int echoPin;
+    const int trigPin;
+    const int echoPin;
 
     long microsecondsToCentimeters(long microseconds);
   };
