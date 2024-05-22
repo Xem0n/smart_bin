@@ -43,7 +43,7 @@ enum LoopState {
   LOOP_WAIT_FOR_COLOR,
 };
 
-LoopState loopState = LOOP_IDLE;
+LoopState loopState = LOOP_REQUEST_COLOR;
 
 void dropTest() {
   stepperController.drop(0);
