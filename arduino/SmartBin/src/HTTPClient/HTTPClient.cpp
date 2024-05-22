@@ -20,6 +20,22 @@ namespace SmartBin {
     // Destructor
   }
 
+  void HTTPClient::getColor() {
+    Serial.println("Get color...");
+    if (client.connect(host, port)) {
+      Serial.println("Connected!");
+      client.print("GET /bin/");
+      client.print(getMacAddress());
+      client.println(" HTTP/1.1");
+      client.print("Host: ");
+      client.println(host);
+      client.println();
+
+      waitingForResponse = true;
+      sentTimestamp = millis();
+    }
+  }
+
   void HTTPClient::sendImage(ArduCAMWrapper::Image image) {
     Serial.println("Try sending...");
     if (client.connect(host, port)) {
