@@ -42,3 +42,7 @@ export interface ColorPickerProps {
 export interface GarbageChartProps {
   data: BinData | undefined;
 }
+
+export interface AmountDisplayProps {
+  data: BinData | undefined;
+}
