@@ -7,9 +7,12 @@
 
 #include "HTTPClient.h"
 
-// todo: test other sizes
 #define BUFFER_SIZE 128
 #define TIMEOUT_LIMIT 5000
+
+// todo:
+//  - test other buffer sizes
+//  - allocate lines on stack
 
 namespace SmartBin {
   HTTPClient::HTTPClient(const char* host, int port) {

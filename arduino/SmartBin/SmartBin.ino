@@ -18,6 +18,9 @@ using namespace SmartBin;
 #define REQUEST_INTERVAL 60000 // in miliseconds
 #define SEND_INTERVAL 10000 // in miliseconds
 
+// todo:
+//  - fix fetching bin color
+
 char ssid[] = "airbag";
 char pass[] = "glebogryzarka";
 
