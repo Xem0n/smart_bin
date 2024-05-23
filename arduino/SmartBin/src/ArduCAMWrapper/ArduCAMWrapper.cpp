@@ -6,6 +6,24 @@
 
 #define BUFFER_SIZE 256
 
+#ifdef __arm__
+// should use uinstd.h to define sbrk but Due causes a conflict
+extern "C" char* sbrk(int incr);
+#else  // __ARM__
+extern char *__brkval;
+#endif  // __arm__
+
+int freeMemory() {
+  char top;
+#ifdef __arm__
+  return &top - reinterpret_cast<char*>(sbrk(0));
+#elif defined(CORE_TEENSY) || (ARDUINO > 103 && ARDUINO != 151)
+  return &top - __brkval;
+#else  // __arm__
+  return __brkval ? &top - __brkval : &top - __malloc_heap_start;
+#endif  // __arm__
+}
+
 ArduCAM SmartBin::ArduCAMWrapper::init(int chipSelectPin) {
   ArduCAM myCAM(OV2640, chipSelectPin);
 
@@ -57,11 +75,15 @@ ArduCAM SmartBin::ArduCAMWrapper::init(int chipSelectPin) {
 SmartBin::ArduCAMWrapper::Image SmartBin::ArduCAMWrapper::captureImage(ArduCAM* cam) {
   SmartBin::ArduCAMWrapper::Image image;
 
+  Serial.println("try capturing...");
+
   cam->flush_fifo();
   cam->clear_fifo_flag();
   cam->start_capture();
 
-  while(!cam->get_bit(ARDUCHIP_TRIG, CAP_DONE_MASK));
+  Serial.println("waiting...");
+  while (!cam->get_bit(ARDUCHIP_TRIG, CAP_DONE_MASK));
+  Serial.println("begin...");
 
   byte buffer[BUFFER_SIZE];
   size_t length = cam->read_fifo_length();
@@ -70,11 +92,28 @@ SmartBin::ArduCAMWrapper::Image SmartBin::ArduCAMWrapper::captureImage(ArduCAM* 
   size_t i = 0;
   uint8_t temp = 0, temp_last = 0;
   bool is_header = false;
-  image.data = new byte[length];
+
+  Serial.print("Free ram: ");
+  Serial.print((float)freeMemory() / 1024);
+  Serial.println(" kb");
+
+  Serial.println("Allocate image data...");
+
+  image.data = (byte*)realloc(image.data == nullptr ? NULL : image.data, length);
+
+  if (image.data == nullptr) {
+    Serial.println("Failed to allocate memory for image data");
+    return image;
+  }
+
   image.length = length;
 
   Serial.print("Image size: ");
   Serial.print(length / 1024);
+  Serial.println(" kb");
+
+  Serial.print("Free ram: ");
+  Serial.print((float)freeMemory() / 1024);
   Serial.println(" kb");
 
   cam->CS_LOW();
@@ -129,11 +168,15 @@ String SmartBin::ArduCAMWrapper::saveImage(ArduCAM* cam) {
     return "";
   }
 
+  Serial.println("try capturing...");
+
   cam->flush_fifo();
   cam->clear_fifo_flag();
   cam->start_capture();
 
+  Serial.println("waiting...");
   while(!cam->get_bit(ARDUCHIP_TRIG, CAP_DONE_MASK));
+  Serial.println("begin...");
 
   byte buffer[BUFFER_SIZE];
   size_t length = cam->read_fifo_length();
