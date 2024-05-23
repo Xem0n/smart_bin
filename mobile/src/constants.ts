@@ -1,4 +1,4 @@
-const URL = "http://192.168.100.208:5000";
+const URL = process.env.WEBSERVER_URL ?? "http://192.168.109.103:5000";
 
 const Months = [
     "Styczeń",
