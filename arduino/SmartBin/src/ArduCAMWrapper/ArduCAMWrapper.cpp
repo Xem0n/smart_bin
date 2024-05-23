@@ -99,7 +99,8 @@ SmartBin::ArduCAMWrapper::Image SmartBin::ArduCAMWrapper::captureImage(ArduCAM* 
 
   Serial.println("Allocate image data...");
 
-  image.data = (byte*)realloc(image.data == nullptr ? NULL : image.data, length);
+  image.data = new byte[length];
+  // image.data = (byte*)realloc(image.data == nullptr ? NULL : image.data, length);
 
   if (image.data == nullptr) {
     Serial.println("Failed to allocate memory for image data");

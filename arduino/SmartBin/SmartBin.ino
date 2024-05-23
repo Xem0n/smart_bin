@@ -29,7 +29,10 @@ Sensor sensor(7, 6);
 
 size_t lastUpdateTime = 0;
 size_t lastRequestTime = 0;
+
+ArduCAMWrapper::Image lastImage;
 String lastImagePath = "";
+
 uint8_t binColor[3] = {255, 255, 255};
 
 const char *garbageTypeMapping[] = {
@@ -119,6 +122,9 @@ void idle() {
   if (sensor.detect()) {
     Serial.println("Detected.");
 
+    // ensure that there's not gonna be a memory leak
+    // resetImage();
+
     loopState = LOOP_SEND_IMAGE;
   } else if ((timestamp - lastRequestTime) > REQUEST_INTERVAL) {
     Serial.println("60s elapsed. Requesting color...");
@@ -133,10 +139,12 @@ void idle() {
 void sendImage() {
   Serial.println("Sending image...");
 
-  ArduCAMWrapper::Image image = ArduCAMWrapper::captureImage(&myCam);
-  httpClient.sendImage(image);
+  if (lastImage.length == 0) {
+    Serial.println("No image data.");
+    lastImage = ArduCAMWrapper::captureImage(&myCam);
+  }
 
-  delete[] image.data;
+  httpClient.sendImage(lastImage);
 
   loopState = LOOP_WAIT_FOR_GARBAGE_TYPE;
 }
@@ -228,6 +236,19 @@ void receiveGarbageType(HTTPResponse response) {
 
   if (isGarbageType(type)) {
     handleGarbage(type);
+  }
+
+  resetImage();
+}
+
+void resetImage() {
+  Serial.println("Restting image data.");
+
+  lastImage.length = 0;
+
+  if (lastImage.data != nullptr) {
+    delete[] lastImage.data;
+    lastImage.data = nullptr;
   }
 }
 
