@@ -12,13 +12,11 @@
 
 using namespace SmartBin;
 
-#define SD_PIN A1
+#define SD_PIN A0
 #define ARDUCAM_PIN A4
 
-#define SEND_INTERVAL 10000
-
-// todo:
-//  - repeat request for bin color
+#define REQUEST_INTERVAL 60000 // in miliseconds
+#define SEND_INTERVAL 10000 // in miliseconds
 
 char ssid[] = "airbag";
 char pass[] = "glebogryzarka";
@@ -27,9 +25,10 @@ HTTPClient httpClient("192.168.109.106", 5000);
 RGBLed mainLed(7, 8, 9, false);
 ArduCAM myCam;
 StepperController stepperController;
-Sensor sensor(A0, 10);
+Sensor sensor(7, 6);
 
 size_t lastUpdateTime = 0;
+size_t lastRequestTime = 0;
 String lastImagePath = "";
 uint8_t binColor[3] = {255, 255, 255};
 
@@ -74,7 +73,8 @@ void setup() {
   myCam = ArduCAMWrapper::init(ARDUCAM_PIN);
   sensor.init();
 
-  if (!SDWrapper::init(SD_PIN) || !WiFiWrapper::init(ssid, pass)) {
+  // if (!SDWrapper::init(SD_PIN) || !WiFiWrapper::init(ssid, pass)) {
+  if (!WiFiWrapper::init(ssid, pass)) {
     Serial.println("Initialization failed!");
     delay(60000);
   }
@@ -107,7 +107,7 @@ void loop() {
 }
 
 void idle() {
-  // size_t timestamp = millis();
+  size_t timestamp = millis();
 
   // if ((timestamp - lastUpdateTime) > SEND_INTERVAL) {
   //   Serial.println("10s idle, sending image");
@@ -120,6 +120,11 @@ void idle() {
     Serial.println("Detected.");
 
     loopState = LOOP_SEND_IMAGE;
+  } else if ((timestamp - lastRequestTime) > REQUEST_INTERVAL) {
+    Serial.println("60s elapsed. Requesting color...");
+
+    loopState = LOOP_REQUEST_COLOR;
+    lastRequestTime = timestamp;
   } else {
     delay(5);
   }
@@ -204,6 +209,8 @@ void handleResponse(LoopState fallbackState, LoopState successState, void (*call
 
       (*callback)(response);
 
+      Serial.println("Reset loop state.");
+
       lastImagePath = "";
       lastUpdateTime = millis();
       loopState = successState;
@@ -249,7 +256,8 @@ bool isGarbageType(int garbageType) {
 }
 
 void handleGarbage(int garbageType) {
-    Serial.println(garbageTypeMapping[garbageType - 1]);
+  Serial.println(garbageTypeMapping[garbageType - 1]);
 
-    // stepperController.drop(garbageType - 1);
+  stepperController.drop(garbageType - 1);
+  Serial.println("spadnelo");
 }
