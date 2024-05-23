@@ -6,14 +6,10 @@ function numberWithLeadingZero(num: number) {
   return num.toString().padStart(2, "0");
 }
 
-// todo:
-//  style the chart
-
 export default function GarbageChart(props: GarbageChartProps) {
   const datasets =
     props.data?.categories.map((category) => {
       const values = [...Array(24).keys()].map(() => ({
-        // value: Math.floor(Math.random() * 15),
         value: 0,
       }));
 
@@ -24,6 +20,10 @@ export default function GarbageChart(props: GarbageChartProps) {
 
       return values;
     }) ?? [];
+
+  const maxValue = Math.max(
+    ...datasets.flat().flatMap((dataset) => dataset.value ?? 0),
+  );
 
   return (
     <View style={styles.container}>
@@ -38,12 +38,24 @@ export default function GarbageChart(props: GarbageChartProps) {
           color1={props.data?.categories[0].color}
           color2={props.data?.categories[1].color}
           color3={props.data?.categories[2].color}
+          maxValue={maxValue}
+          hideRules
+          hideDataPoints
+          curved
           scrollToIndex={new Date().getHours()}
           xAxisLabelTexts={Array.from(
             { length: 24 },
             (_, i) => numberWithLeadingZero(i) + ":00",
           )}
         />
+
+        <View style={styles.legend}>
+          {props.data?.categories.map((category, index) => (
+            <Text key={index} style={{ color: category.color }}>
+              {category.name}
+            </Text>
+          ))}
+        </View>
       </View>
     </View>
   );
@@ -86,5 +98,14 @@ const styles = StyleSheet.create({
     marginTop: 15,
     paddingVertical: 10,
     borderRadius: 12,
+  },
+  legend: {
+    width: 200,
+
+    marginTop: 15,
+
+    flexDirection: "row",
+    justifyContent: "space-around",
+    alignItems: "center",
   },
 });
