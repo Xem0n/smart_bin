@@ -2,16 +2,17 @@ import io
 import os
 import numpy as np
 from PIL import Image
+from keras.preprocessing import image
+
+size = (int(os.getenv('IMG_WIDTH')), int(os.getenv('IMG_HEIGHT')))
 
 def transform_image(id, bytes):
-    size = (os.getenv('IMG_WIDTH'), os.getenv('IMG_HEIGHT'))
+    img = Image.open(io.BytesIO(bytes))
+    img = img.resize(size, resample=Image.Resampling.LANCZOS)
+    img = img.convert(get_color_mode())
+    img.save(f'tmp/{id}_transformed.jpg')
 
-    image = Image.open(io.BytesIO(bytes))
-    image = image.resize(size, resample=Image.Resampling.LANCZOS)
-    image = image.convert(get_color_mode())
-    image.save(f'tmp/{id}_transformed.jpg')
-
-    return np.expand_dims(np.array(image), 0)
+    return np.expand_dims(image.img_to_array(img, dtype=np.uint8), 0)
 
 def get_color_mode():
     return 'RGB' if os.getenv('COLOR_MODE') == 'rgb' else 'L'
