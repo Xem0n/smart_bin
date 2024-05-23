@@ -7,7 +7,7 @@ namespace SmartBin {
   namespace ArduCAMWrapper {
     struct Image {
       byte* data = nullptr;
-      size_t length;
+      size_t length = 0;
     };
 
     ArduCAM init(int chipSelectPin);
