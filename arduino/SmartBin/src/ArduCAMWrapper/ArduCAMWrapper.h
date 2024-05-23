@@ -6,7 +6,7 @@
 namespace SmartBin {
   namespace ArduCAMWrapper {
     struct Image {
-      byte* data;
+      byte* data = nullptr;
       size_t length;
     };
 
