@@ -3,6 +3,7 @@ from os import path
 from dotenv import load_dotenv
 import os
 import argparse
+import uuid
 
 load_dotenv()
 
@@ -19,7 +20,7 @@ def resize_directory(source_directory, target_directory, mode, grayscale):
             if grayscale:
                 img = img.convert('L')
 
-            img.save(path.join(target_directory, file))
+            img.save(path.join(target_directory, str(uuid.uuid4()) + '.jpg'))
 
 def resize(img, mode):
     if mode == 'fill':
@@ -103,6 +104,13 @@ def main():
         '-g',
         '--grayscale',
         help='Whether should be grayscale.',
+        default=False,
+        action='store_true',
+    )
+    parser.add_argument(
+        '-u',
+        '--uuid',
+        help='Whether should rename with UUID.',
         default=False,
         action='store_true',
     )
