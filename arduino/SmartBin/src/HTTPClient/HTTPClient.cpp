@@ -7,7 +7,8 @@
 
 #include "HTTPClient.h"
 
-#define BUFFER_SIZE 64
+// todo: test other sizes
+#define BUFFER_SIZE 128
 #define TIMEOUT_LIMIT 5000
 
 namespace SmartBin {
@@ -48,6 +49,7 @@ namespace SmartBin {
       client.println("Mac-Address: " + getMacAddress());
       client.println();
       writeImage(image);
+      Serial.println("Image sent.");
 
       waitingForResponse = true;
       sentTimestamp = millis();
@@ -68,6 +70,7 @@ namespace SmartBin {
       client.println("Mac-Address: " + getMacAddress());
       client.println();
       writeFile(file);
+      Serial.println("Image sent.");
 
       waitingForResponse = true;
       sentTimestamp = millis();
