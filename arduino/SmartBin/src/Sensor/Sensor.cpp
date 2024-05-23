@@ -1,6 +1,6 @@
 #include "Sensor.h"
 
-#define MAX_DISTANCE 100 // in centimeters
+#define MAX_DISTANCE 10 // in centimeters
 
 namespace SmartBin {
   Sensor::Sensor(const int trigPin, const int echoPin) : trigPin(trigPin), echoPin(echoPin) {}
