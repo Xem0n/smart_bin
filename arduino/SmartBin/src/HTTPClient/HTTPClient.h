@@ -40,7 +40,7 @@ namespace SmartBin {
     WiFiClient client;
     byte buffer[64];
     bool waitingForResponse = false;
-    size_t sentTimestamp;
+    size_t sentTimestamp = 0;
 
     void writeImage(ArduCAMWrapper::Image image);
     void writeFile(File file);
