@@ -1,8 +1,8 @@
 from dotenv import load_dotenv
 load_dotenv()
 
-import uuid
 import numpy as np
+from datetime import datetime
 from flask import Flask, request
 from services.predictor import predict
 from db.database import init_db, db_session
@@ -51,7 +51,8 @@ def update_bin_info():
 def predict_image():
     print('start...')
     data = request.get_data()
-    id = uuid.uuid4()
+    print('data received')
+    id = str(datetime.now())
 
     print(id)
 
