@@ -246,10 +246,10 @@ void resetImage() {
 
   lastImage.length = 0;
 
-  if (lastImage.data != nullptr) {
-    delete[] lastImage.data;
-    lastImage.data = nullptr;
-  }
+  // if (lastImage.data != nullptr) {
+  //   delete[] lastImage.data;
+  //   lastImage.data = nullptr;
+  // }
 }
 
 void receiveBinColor(HTTPResponse response) {

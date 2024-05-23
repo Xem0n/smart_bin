@@ -99,13 +99,21 @@ SmartBin::ArduCAMWrapper::Image SmartBin::ArduCAMWrapper::captureImage(ArduCAM* 
 
   Serial.println("Allocate image data...");
 
-  image.data = new byte[length];
-  // image.data = (byte*)realloc(image.data == nullptr ? NULL : image.data, length);
+  if (length >= MAX_IMAGE_SIZE) {
+    Serial.println("Image size is too big. Aborting...");
 
-  if (image.data == nullptr) {
-    Serial.println("Failed to allocate memory for image data");
+    image.length = 0;
     return image;
   }
+
+  memset(image.data, 0, MAX_IMAGE_SIZE);
+  // image.data = new byte[length];
+  // image.data = (byte*)realloc(image.data == nullptr ? NULL : image.data, length);
+
+  // if (image.data == nullptr) {
+  //   Serial.println("Failed to allocate memory for image data");
+  //   return image;
+  // }
 
   image.length = length;
 
