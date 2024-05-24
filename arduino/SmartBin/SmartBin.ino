@@ -12,9 +12,6 @@
 
 using namespace SmartBin;
 
-#define SD_PIN A0
-#define ARDUCAM_PIN A4
-
 #define REQUEST_INTERVAL 60000 // in miliseconds
 #define SEND_INTERVAL 10000 // in miliseconds
 
@@ -26,15 +23,11 @@ char pass[] = "glebogryzarka";
 
 HTTPClient httpClient("192.168.109.106", 5000);
 RGBLed mainLed(7, 8, 9, false);
-ArduCAM myCam;
 StepperController stepperController;
 Sensor sensor(7, 6);
 
 size_t lastUpdateTime = 0;
 size_t lastRequestTime = 0;
-
-ArduCAMWrapper::Image lastImage;
-String lastImagePath = "";
 
 uint8_t binColor[3] = {255, 255, 255};
 
@@ -76,7 +69,6 @@ void setup() {
   delay(3000);
 
   mainLed.setColor(binColor[0], binColor[1], binColor[2]);
-  myCam = ArduCAMWrapper::init(ARDUCAM_PIN);
   sensor.init();
 
   // if (!SDWrapper::init(SD_PIN) || !WiFiWrapper::init(ssid, pass)) {
@@ -96,7 +88,6 @@ void loop() {
       break;
     case LOOP_SEND_IMAGE:
       sendImage();
-      // sendImageFromSD();
       break;
     case LOOP_REQUEST_COLOR:
       requestColor();
@@ -125,9 +116,6 @@ void idle() {
   if (sensor.detect()) {
     Serial.println("Detected.");
 
-    // ensure that there's not gonna be a memory leak
-    // resetImage();
-
     loopState = LOOP_SEND_IMAGE;
   } else if ((timestamp - lastRequestTime) > REQUEST_INTERVAL) {
     Serial.println("60s elapsed. Requesting color...");
@@ -140,38 +128,8 @@ void idle() {
 }
 
 void sendImage() {
-  Serial.println("Sending image...");
-
-  if (lastImage.length == 0) {
-    Serial.println("No image data.");
-    lastImage = ArduCAMWrapper::captureImage(&myCam);
-  }
-
-  httpClient.sendImage(lastImage);
-
+  httpClient.sendImage();
   loopState = LOOP_WAIT_FOR_GARBAGE_TYPE;
-}
-
-void sendImageFromSD() {
-  Serial.println("Sending image from SD...");
-
-  if (lastImagePath != "") {
-    httpClient.sendImage(lastImagePath);
-
-    loopState = LOOP_WAIT_FOR_GARBAGE_TYPE;
-    return;
-  }
-
-  String path = ArduCAMWrapper::saveImage(&myCam);
-
-  if (path == "") {
-    return;
-  }
-
-  lastImagePath = path;
-  loopState = LOOP_WAIT_FOR_GARBAGE_TYPE;
-
-  httpClient.sendImage(path);
 }
 
 void requestColor() {
@@ -201,7 +159,6 @@ void handleResponse(LoopState fallbackState, LoopState successState, void (*call
     case NO_REQUEST:
       Serial.println("to sie tez nie powinno zdarzyc xd. nie wiem jak to obsluzyc");
 
-      lastImagePath = "";
       lastUpdateTime = millis();
       loopState = successState;
 
@@ -222,7 +179,6 @@ void handleResponse(LoopState fallbackState, LoopState successState, void (*call
 
       Serial.println("Reset loop state.");
 
-      lastImagePath = "";
       lastUpdateTime = millis();
       loopState = successState;
 
@@ -240,19 +196,6 @@ void receiveGarbageType(HTTPResponse response) {
   if (isGarbageType(type)) {
     handleGarbage(type);
   }
-
-  resetImage();
-}
-
-void resetImage() {
-  Serial.println("Restting image data.");
-
-  lastImage.length = 0;
-
-  // if (lastImage.data != nullptr) {
-  //   delete[] lastImage.data;
-  //   lastImage.data = nullptr;
-  // }
 }
 
 void receiveBinColor(HTTPResponse response) {
