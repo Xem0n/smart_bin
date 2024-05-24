@@ -1,6 +1,8 @@
 from dotenv import load_dotenv
 load_dotenv()
 
+import os
+import requests
 import numpy as np
 from datetime import datetime
 from flask import Flask, request
@@ -8,6 +10,9 @@ from services.predictor import predict
 from db.database import init_db, db_session
 from services.database import init_bin, add_garbage, get_bins_data, get_bin_data, update_bin
 from services.utils import get_bin_data_dto, transform_image
+
+webcam_url = os.getenv('IP_WEBCAM_URL')
+print(webcam_url)
 
 app = Flask(__name__)
 init_db()
@@ -49,8 +54,8 @@ def update_bin_info():
 
 @app.post('/')
 def predict_image():
-    print('start...')
-    data = request.get_data()
+    print('start')
+    data = fetch_image()
     print('data received')
     id = str(datetime.now())
 
@@ -78,6 +83,11 @@ def predict_image():
     except Exception as e:
         print(e)
         return '0'
+
+def fetch_image():
+    r = requests.get(f'{webcam_url}/shot.jpg')
+
+    return r.content
 
 if __name__ == '__main__':
     # make sure to allow port in firewall
