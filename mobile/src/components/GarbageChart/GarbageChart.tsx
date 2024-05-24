@@ -1,12 +1,15 @@
 import { StyleSheet, Text, View } from "react-native";
 import { LineChart } from "react-native-gifted-charts";
 import { GarbageChartProps } from "../../types/props";
+import compareDate from "../../utils/compare_date";
 
 function numberWithLeadingZero(num: number) {
   return num.toString().padStart(2, "0");
 }
 
 export default function GarbageChart(props: GarbageChartProps) {
+  const currentDay = new Date();
+
   const datasets =
     props.data?.categories.map((category) => {
       const values = [...Array(24).keys()].map(() => ({
@@ -14,7 +17,13 @@ export default function GarbageChart(props: GarbageChartProps) {
       }));
 
       for (const garbage of category.garbages) {
-        const hour = new Date(garbage.created_at).getHours();
+        const date = new Date(garbage.created_at * 1000);
+
+        if (!compareDate(date, currentDay)) {
+          continue;
+        }
+
+        const hour = date.getHours();
         values[hour].value++;
       }
 

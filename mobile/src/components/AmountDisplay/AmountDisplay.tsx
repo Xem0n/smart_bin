@@ -5,11 +5,12 @@ import compareDate from "../../utils/compare_date";
 
 export default function AmountDisplay(props: AmountDisplayProps) {
   const currentDay = new Date();
+  console.log(currentDay.getHours());
   const amount = props.data?.categories.reduce(
     (sum, category) =>
       sum +
       category.garbages.filter((garbage) =>
-        compareDate(new Date(garbage.created_at), currentDay),
+        compareDate(new Date(garbage.created_at * 1000), currentDay),
       ).length,
     0,
   );
