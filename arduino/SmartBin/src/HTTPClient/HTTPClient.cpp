@@ -40,6 +40,21 @@ namespace SmartBin {
     }
   }
 
+  void HTTPClient::sendImage() {
+    Serial.println("Try sending...");
+    if (client.connect(host, port)) {
+      Serial.println("Connected!");
+      client.println("POST / HTTP/1.1");
+      client.print("Host: ");
+      client.println(host);
+      client.println("Mac-Address: " + getMacAddress());
+      client.println();
+
+      waitingForResponse = true;
+      sentTimestamp = millis();
+    }
+  }
+
   void HTTPClient::sendImage(ArduCAMWrapper::Image image) {
     Serial.println("Try sending...");
     if (client.connect(host, port)) {
