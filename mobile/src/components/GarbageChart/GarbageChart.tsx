@@ -12,7 +12,7 @@ export default function GarbageChart(props: GarbageChartProps) {
 
   const datasets =
     props.data?.categories.map((category) => {
-      const values = [...Array(24).keys()].map(() => ({
+      const values = [...Array(currentDay.getHours() + 1).keys()].map(() => ({
         value: 0,
       }));
 
@@ -47,10 +47,11 @@ export default function GarbageChart(props: GarbageChartProps) {
           color1={props.data?.categories[0].color}
           color2={props.data?.categories[1].color}
           color3={props.data?.categories[2].color}
-          maxValue={maxValue}
+          maxValue={Math.max(maxValue, 10)}
           hideRules
           hideDataPoints
           curved
+          curveType={1}
           scrollToIndex={new Date().getHours()}
           xAxisLabelTexts={Array.from(
             { length: 24 },
