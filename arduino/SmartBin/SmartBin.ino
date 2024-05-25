@@ -15,9 +15,6 @@ using namespace SmartBin;
 #define REQUEST_INTERVAL 60000 // in miliseconds
 #define SEND_INTERVAL 10000 // in miliseconds
 
-// todo:
-//  - fix fetching bin color
-
 char ssid[] = "airbag";
 char pass[] = "glebogryzarka";
 
@@ -58,6 +55,7 @@ void dropTest() {
 void setup() {
   Serial.begin(9600);
 
+  // commment in order to run remotely
   while (!Serial) {
     ;
   }
