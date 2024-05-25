@@ -49,11 +49,13 @@ def init_model(img_width, img_height, color_mode, num_classes):
         layers.Conv2D(64, 3, activation='relu'),
         layers.MaxPooling2D(),
         layers.Flatten(),
+        layers.Dense(512, activation='relu'),
         layers.Dense(256, activation='relu'),
         layers.Dense(128, activation='relu'),
         layers.Dense(64, activation='relu'),
         layers.Dense(32, activation='relu'),
         layers.Dense(16, activation='relu'),
+        layers.Dense(8, activation='relu'),
         layers.Dense(num_classes),
     ])
 
