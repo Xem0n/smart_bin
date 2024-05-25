@@ -14,7 +14,7 @@ bool SmartBin::WiFiWrapper::init(char* ssid, char* pass) {
 
   String fv = WiFi.firmwareVersion();
 
-  if (fv != "1.1.0") {
+  if (fv != "1.5.0") {
     Serial.println("Please upgrade the firmware");
   }
 
