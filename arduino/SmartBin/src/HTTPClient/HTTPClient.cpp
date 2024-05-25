@@ -230,11 +230,15 @@ namespace SmartBin {
     char* body = new char[length + 1];
 
     if (!body) {
+      Serial.println("Can't allocate memory for body.");
       return nullptr;
     }
 
-    client.read((uint8_t*)body, length);
+    while (client.available() == 0) {
+      delay(1);
+    }
 
+    client.read((uint8_t*)body, length);
     body[length] = '\0';
 
     return body;
