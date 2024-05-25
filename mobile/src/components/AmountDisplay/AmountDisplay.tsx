@@ -5,7 +5,7 @@ import compareDate from "../../utils/compare_date";
 
 export default function AmountDisplay(props: AmountDisplayProps) {
   const currentDay = new Date();
-  console.log(currentDay.getHours());
+
   const amount = props.data?.categories.reduce(
     (sum, category) =>
       sum +
