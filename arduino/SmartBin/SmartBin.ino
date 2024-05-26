@@ -226,6 +226,16 @@ void receiveBinColor(HTTPResponse response) {
   Serial.print(", ");
   Serial.println(binColor[2]);
 
+  if (binColor[0] == 6 && binColor[1] == 214 && binColor[2] == 160) {
+    binColor[0] = 0;
+    binColor[1] = 255;
+    binColor[2] = 0;
+  } else if (binColor[0] == 243 && binColor[1] == 243 && binColor[2] == 243) {
+    binColor[0] = 255;
+    binColor[1] = 255;
+    binColor[2] = 255;
+  }
+
   mainLed.setColor(binColor[0], binColor[1], binColor[2]);
 }
 
