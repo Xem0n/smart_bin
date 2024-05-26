@@ -68,10 +68,18 @@ def init_model(img_width, img_height, color_mode, num_classes):
     return model
 
 def train_model(model, train_ds, val_ds, epochs):
+    callbacks = [
+        keras.callbacks.EarlyStopping(
+            patience=5,
+            restore_best_weights=True,
+        ),
+    ]
+
     model.fit(
         train_ds,
         validation_data=val_ds,
         epochs=epochs,
+        callbacks=callbacks,
     )
 
 def save_logs(model, logs_path, model_name, val_ds):
