@@ -52,6 +52,18 @@ void dropTest() {
   stepperController.drop(2);
 }
 
+void colorTest() {
+  Serial.println("red");
+  mainLed.setColor(255, 0, 0);
+  delay(1000);
+  Serial.println("green");
+  mainLed.setColor(0, 255, 0);
+  delay(1000);
+  Serial.println("blue");
+  mainLed.setColor(0, 0, 255);
+  delay(1000);
+}
+
 void setup() {
   Serial.begin(9600);
 
