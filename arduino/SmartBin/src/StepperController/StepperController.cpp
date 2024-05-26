@@ -35,24 +35,20 @@ namespace SmartBin {
   void StepperController::dropPaper() {
     Serial.println("Open paper...");
 
-    lowerStepper->step(256);
-    delay(10);
     upperStepper->step(512);
-    delay(10);
+    delay(1000);
     upperStepper->step(-512);
-    delay(10);
-    lowerStepper->step(-256);
   }
 
   void StepperController::dropPlastic() {
     Serial.println("Open plastic...");
 
-    lowerStepper->step(-312);
+    lowerStepper->step(-624);
     delay(10);
     upperStepper->step(400);
-    delay(10);
+    delay(1000);
     upperStepper->step(-400);
     delay(10);
-    lowerStepper->step(312);
+    lowerStepper->step(624);
   }
 }
