@@ -138,6 +138,7 @@ void idle() {
 }
 
 void sendImage() {
+  delay(1000);
   httpClient.sendImage();
   loopState = LOOP_WAIT_FOR_GARBAGE_TYPE;
 }
