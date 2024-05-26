@@ -18,8 +18,8 @@ namespace SmartBin {
     void dropPlastic();
 
   private:
-    Stepper* upperStepper = new Stepper(1024, 5, 3, 4, 2);
-    Stepper* lowerStepper = new Stepper(1024, 1, A6, 0, A5);
+    Stepper* upperStepper = new Stepper(1024, A6, A4, A5, A3);
+    Stepper* lowerStepper = new Stepper(1024, 3, 1, 2, 0);
   };
 }
 

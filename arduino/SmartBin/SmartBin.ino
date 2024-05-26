@@ -19,9 +19,9 @@ char ssid[] = "airbag";
 char pass[] = "glebogryzarka";
 
 HTTPClient httpClient("192.168.109.106", 5000);
-RGBLed mainLed(7, 8, 9, false);
+RGBLed mainLed(A0, A1, A2, false);
 StepperController stepperController;
-Sensor sensor(7, 6);
+Sensor sensor(5, 4);
 
 size_t lastUpdateTime = 0;
 size_t lastRequestTime = 0;
