@@ -4,6 +4,7 @@ load_dotenv()
 import os
 import requests
 import numpy as np
+from random import randrange
 from datetime import datetime
 from flask import Flask, request
 from services.predictor import predict
@@ -21,6 +22,7 @@ init_db()
 def shutdown_session(exception=None):
     db_session.remove()
 
+# to delete
 @app.post('/init')
 def test_init():
     init_bin('test')
@@ -37,8 +39,10 @@ def get_bin_color(mac_address):
     try:
         bin = get_bin_data(mac_address)
 
+        print(f'bin color: {bin.color}')
         return bin.color
     except:
+        print('not found')
         return '#000000', 404
 
 @app.post('/update')
@@ -55,39 +59,61 @@ def update_bin_info():
 @app.post('/')
 def predict_image():
     print('start')
-    data = fetch_image()
-    print('data received')
-    id = str(datetime.now())
-
-    print(id)
-
-    with open(f'tmp/{id}.jpg', 'wb') as f:
-        f.write(data)
 
     try:
-        print('transform')
-        image = transform_image(id, data)
+        data = fetch_image()
+        print('data received')
 
-        print('predict')
-        prediction = predict(image)
+        id = str(datetime.now())
+        print(id)
 
-        print(prediction)
-        result = np.argmax(prediction)
+        with open(f'tmp/{id}.jpg', 'wb') as f:
+            f.write(data)
 
-        add_garbage(request.headers.get('Mac-Address', ''), result)
+            print('transform')
+            image = transform_image(id, data)
 
-        # result must be one bigger
-        # bcuz strtol() in C fails to 0 value
-        # which unables to check whether body is invalid or of type equal to 0
-        return str(result + 1)
+            print('predict')
+            prediction = predict(image)
+
+            print(prediction)
+            result = np.argmax(prediction)
+
+            print(f'result: {result}')
+
+            add_garbage(request.headers.get('Mac-Address', ''), result)
+
+            # result must be one bigger
+            # bcuz strtol() in C fails to 0 value
+            # which unables to check whether body is invalid or of type equal to 0
+            return str(result + 1)
     except Exception as e:
         print(e)
         return '0'
 
 def fetch_image():
+    requests.get(f'{webcam_url}/enabletorch')
     r = requests.get(f'{webcam_url}/shot.jpg')
+    requests.get(f'{webcam_url}/disabletorch')
 
     return r.content
+
+# to delete
+bin_id = 'ec:62:60:8f:e1:d8'
+
+@app.post('/lolxd')
+def random_garbage():
+    result = randrange(0, 3)
+
+    try:
+        add_garbage(bin_id, result)
+        print(f'added {result}')
+
+        return str(result), 200
+    except Exception as e:
+        print('cos poszlo nie tak xd', e)
+
+        return '-1', 500
 
 if __name__ == '__main__':
     # make sure to allow port in firewall
