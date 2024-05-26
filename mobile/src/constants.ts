@@ -1,4 +1,4 @@
-const URL = "http://192.168.100.208:5000";
+const URL = "http://10.0.0.137:5000";
 
 const Months = [
     "Styczeń",
@@ -16,7 +16,7 @@ const Months = [
 ];
 
 const PredefinedColors = [
-    "#e5b514",
+    "#06d6a0",
     "#5aa9e7",
     "#f94144",
     "#fa34d5",
