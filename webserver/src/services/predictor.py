@@ -13,6 +13,11 @@ def load_model():
 
 model = load_model()
 
+def get_size():
+    return model.layers[0].input_shape[1:3][::-1]
+
+def get_color_mode():
+    return 'RGB' if model.layers[0].input_shape[3] == 3 else 'L'
 
 def predict(image):
     return model.predict(image)[0]

@@ -13,7 +13,6 @@ from services.database import init_bin, add_garbage, get_bins_data, get_bin_data
 from services.utils import get_bin_data_dto, transform_image
 
 webcam_url = os.getenv('IP_WEBCAM_URL')
-print(webcam_url)
 
 app = Flask(__name__)
 init_db()
