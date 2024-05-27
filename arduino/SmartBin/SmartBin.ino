@@ -15,10 +15,10 @@ using namespace SmartBin;
 #define REQUEST_INTERVAL 60000 // in miliseconds
 #define SEND_INTERVAL 10000 // in miliseconds
 
-char ssid[] = "airbag";
-char pass[] = "glebogryzarka";
+char ssid[] = "Redmi Note 9 Pro";
+char pass[] = "krystian";
 
-HTTPClient httpClient("192.168.109.106", 5000);
+HTTPClient httpClient("192.168.43.113", 5000);
 RGBLed mainLed(A0, A1, A2, false);
 StepperController stepperController;
 Sensor sensor(5, 4);
@@ -68,9 +68,9 @@ void setup() {
   Serial.begin(9600);
 
   // commment in order to run remotely
-  while (!Serial) {
-    ;
-  }
+  // while (!Serial) {
+  //   ;
+  // }
 
   Serial.println("Initializing...");
 
@@ -78,7 +78,6 @@ void setup() {
   SPI.begin();
   delay(3000);
 
-  mainLed.setColor(binColor[0], binColor[1], binColor[2]);
   sensor.init();
 
   // if (!SDWrapper::init(SD_PIN) || !WiFiWrapper::init(ssid, pass)) {
@@ -133,7 +132,7 @@ void idle() {
     loopState = LOOP_REQUEST_COLOR;
     lastRequestTime = timestamp;
   } else {
-    delay(5);
+    delay(3);
   }
 }
 
