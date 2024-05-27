@@ -1,4 +1,4 @@
-const URL = "http://10.0.0.137:5000";
+const URL = "http://192.168.100.208:5000";
 
 const Months = [
     "Styczeń",
