@@ -27,28 +27,28 @@ namespace SmartBin {
   void StepperController::dropMetal() {
     Serial.println("Open metal...");
 
-    upperStepper->step(-440);
+    upperStepper->step(-424);
     delay(1000);
-    upperStepper->step(440);
+    upperStepper->step(424);
   }
 
   void StepperController::dropPaper() {
     Serial.println("Open paper...");
 
-    upperStepper->step(512);
+    upperStepper->step(480);
     delay(1000);
-    upperStepper->step(-512);
+    upperStepper->step(-480);
   }
 
   void StepperController::dropPlastic() {
     Serial.println("Open plastic...");
 
-    lowerStepper->step(-624);
+    lowerStepper->step(-608);
     delay(10);
-    upperStepper->step(400);
+    upperStepper->step(352);
     delay(1000);
-    upperStepper->step(-400);
+    upperStepper->step(-352);
     delay(10);
-    lowerStepper->step(624);
+    lowerStepper->step(608);
   }
 }
